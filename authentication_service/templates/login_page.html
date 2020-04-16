@@ -7,27 +7,13 @@
 {% block body %}
 <div class="content">
     <h1 style="text-align: center">User login</h1>
-    {% if tasks|length < 1 %}
-    <h4 style="text-align: center">Do you have an account? Login here!</h4>
-    {% else %}
-    <table>
-        <tr>
-            <th>Task</th>
-            <th>Added</th>
-            <th>Actions</th>
-        </tr>
-        {% for task in tasks %}
-            <tr>
-                <td>{{ task.content }}</td>
-            </tr>
-        {% endfor %}
-    </table>
-    {% endif %}
+
+    <h4> If you have already an account, you can login here. </h4>
 
     <div class="form">
         <form action="/login" method="POST">
-            <input type="text" name="content" id="content">
-            <input type="text" name="content1" id="content1">
+            Username: <input type="text" name="content" id="content">
+            Password: <input type="text" name="content1" id="content1">
             <input type="submit" value="Login">
         </form>
     </div>
