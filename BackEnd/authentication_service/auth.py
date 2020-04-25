@@ -13,9 +13,9 @@ app.secret_key = 'thisismysecretdonottouchit'
 def token_required(f):
     @wraps(f)
     def decorated(*args, **kwargs):
-        token = request.args.get('token') 
+        token = session['token']
 
-        if not token:
+        if not token: 
             return "You have to login!"
 
         try: 
@@ -47,9 +47,7 @@ def unprotected():
 @app.route('/home')
 @token_required
 def home():
-    if 'token' in request.args:
-        token = request.args.get('token')
-        return render_template('home_page.html', token=token)
+    return render_template('home_page.html')
 
 
 @app.route('/chess')
@@ -83,8 +81,6 @@ def index():
 @app.route('/login', methods=['POST', 'GET'])
 def login():
  
-    #if token_exists:
-
     # login
     msg = 'Incorrect username/password!'  #error msg
     if request.method == 'POST':
@@ -92,20 +88,23 @@ def login():
         input_username = request.form['content']       
         input_password = request.form['content1']   
 
-        # elegxoume sth bash gia username, password
+        # check database for username, password
         mycursor = mydb.cursor()
         mycursor.execute('SELECT * FROM users WHERE username = %s AND password = %s', (input_username, input_password))
 
         # fetch one record, return result
         user_account = mycursor.fetchone()
-        # an yparxei to account
+        # if there is such account
         if user_account:
             token = jwt.encode({'user' : user_account[0], 'exp' : datetime.datetime.utcnow() + datetime.timedelta(minutes=2) }, app.secret_key) 
+            # Put it in the session
+            session['token'] = token
+            session['role'] = user_account[7]
 
-            #redirect to home page
-            return redirect(url_for('home', token=token))
+            #redirect to home page 
+            return redirect(url_for('home'))
         else:
-            # den yparxei to account / do8hkan la8os credentials 
+            # no such account / wrong credentials 
             return msg
     else:
         return render_template('login.html')
@@ -116,11 +115,15 @@ def login():
 @app.route('/assign', methods=['POST', 'GET'])
 @token_required
 def assign():
-    mycursor = mydb.cursor()
-    mycursor.execute('SELECT * FROM users')
-    users = mycursor.fetchall()
 
-    return render_template('all_users.html', users = users)
+    # check if the user is Admin
+    if session['role']=='Admin':
+        mycursor = mydb.cursor()
+        mycursor.execute('SELECT * FROM users')
+        users = mycursor.fetchall()
+        return render_template('all_users.html', users = users)
+    else:
+        return "You are not an Admin, you don't have the right to enter!"
 
 
 # update role 
@@ -135,7 +138,6 @@ def update():
         flash("User Role Updated Successfully!")
         mydb.commit()
         return redirect(url_for('assign'))
-
 
      
 if __name__ == "__main__": 
