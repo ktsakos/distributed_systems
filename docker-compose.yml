@@ -5,7 +5,7 @@ services:
         ports: 
             - "8001:80"
         volumes:
-            - ./www:/var/www/html/
+            - ./FrontEnd/html:/var/www/html/
         links:
             - db
         networks:
@@ -20,7 +20,7 @@ services:
             MYSQL_PASSWORD: test
             MYSQL_ROOT_PASSWORD: test
         volumes:
-            - ./dump:/docker-entrypoint-initdb.d
+            - ./BackEnd/dump:/docker-entrypoint-initdb.d
             - persistent:/var/lib/mysql
         networks:
             - default
@@ -34,5 +34,6 @@ services:
             MYSQL_USER: user
             MYSQL_PASSWORD: test
             MYSQL_ROOT_PASSWORD: test
+
 volumes:
     persistent:
