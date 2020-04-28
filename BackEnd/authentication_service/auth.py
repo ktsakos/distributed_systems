@@ -10,13 +10,15 @@ app.secret_key = 'thisismysecretdonottouchit'
 #app.secret_key = ''.join(random.choice(string.ascii_uppercase + string.digits)
 #    for x in range(32)) #a random string of 32 characters 
 
+
 def token_required(f):
     @wraps(f)
     def decorated(*args, **kwargs):
-        token = session['token']
-
-        if not token: 
+        
+        if not 'token' in session or session['token'] == 0: 
             return "You have to login!"
+
+        token = session['token']
 
         try: 
             data = jwt.decode(token, app.secret_key)
@@ -28,37 +30,49 @@ def token_required(f):
     return decorated
 
 
-
-#db data
+#db connection 
 mydb = mysql.connector.connect(
-  host="172.19.0.3",
+  host="172.19.0.2",
   port="3306",
   user="dbuser",
   passwd="dbpassword",
   database="mydatabase"
 )
 
-#an unprotected route 
-@app.route('/unprotected')
-def unprotected():
-    return jsonify({'message' : 'Anyone can view this!'})
+### api routes 
 
-#a protected route 
+# home page
 @app.route('/home')
 @token_required
 def home():
+    #update token timer 
+    token = jwt.encode({'user' : session['user_id'], 'exp' : datetime.datetime.utcnow() + datetime.timedelta(minutes=2) }, app.secret_key) 
+    # Put it in the session
+    session['token'] = token
     return render_template('home_page.html')
 
 
+# chess game 
 @app.route('/chess')
 @token_required
 def chess():
-    return render_template('chess.html')      
-  
 
-# registration
+    #update token timer 
+    token = jwt.encode({'user' : session['user_id'], 'exp' : datetime.datetime.utcnow() + datetime.timedelta(minutes=2) }, app.secret_key) 
+    # Put it in the session
+    session['token'] = token
+    return render_template('chess.html')      
+
+
+# index.html
 @app.route('/', methods=['POST', 'GET'])
 def index():
+    return render_template('index.html')
+    
+
+# register
+@app.route('/register', methods=['POST', 'GET'])
+def register():
     if request.method == 'POST': 
         task_content0 = request.form['content']       
         task_content1 = request.form['content1']   
@@ -99,6 +113,7 @@ def login():
             token = jwt.encode({'user' : user_account[0], 'exp' : datetime.datetime.utcnow() + datetime.timedelta(minutes=2) }, app.secret_key) 
             # Put it in the session
             session['token'] = token
+            session['user_id'] = user_account[0]
             session['role'] = user_account[7]
 
             #redirect to home page 
@@ -110,13 +125,17 @@ def login():
         return render_template('login.html')
 
 
-
 # assign role 
 @app.route('/assign', methods=['POST', 'GET'])
 @token_required
 def assign():
 
-    # check if the user is Admin
+    #update token timer 
+    token = jwt.encode({'user' : session['user_id'], 'exp' : datetime.datetime.utcnow() + datetime.timedelta(minutes=2) }, app.secret_key) 
+    # Put it in the session
+    session['token'] = token
+
+    # check if the user is Admin, else deny entrance 
     if session['role']=='Admin':
         mycursor = mydb.cursor()
         mycursor.execute('SELECT * FROM users')
@@ -128,7 +147,13 @@ def assign():
 
 # update role 
 @app.route('/update', methods=['POST','GET'])
+@token_required
 def update():
+
+    #update token timer 
+    token = jwt.encode({'user' : session['user_id'], 'exp' : datetime.datetime.utcnow() + datetime.timedelta(minutes=2) }, app.secret_key) 
+    # Put it in the session
+    session['token'] = token
 
     if request.method == 'POST':
         id = request.form['id']
@@ -138,6 +163,15 @@ def update():
         flash("User Role Updated Successfully!")
         mydb.commit()
         return redirect(url_for('assign'))
+
+
+# logout 
+@token_required
+@app.route('/logout')
+def logout():
+    #make token invalid 
+    session['token'] = 0 
+    return jsonify({"msg": "Successfully logged out"}), 200
 
      
 if __name__ == "__main__": 
