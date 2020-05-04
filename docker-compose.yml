@@ -1,4 +1,4 @@
-version: "2"
+version: "3"
 services:
     www:
         build: .
@@ -34,6 +34,15 @@ services:
             MYSQL_USER: user
             MYSQL_PASSWORD: test
             MYSQL_ROOT_PASSWORD: test
-
+    playmaster:
+        build: ./BackEnd/PlayMasterService
+        depends_on:
+            - db
+        ports:
+            - 5001:5000
+        links: 
+            - db
+        networks:
+            - default
 volumes:
     persistent:
