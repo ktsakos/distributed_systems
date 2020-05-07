@@ -1,3 +1,62 @@
+//websocket communication testing
+var socket=io.connect('http://147.27.60.48:5001');
+socket.on('connect',function(){//connection trying event
+    socket.emit('connectionack',"{\"data\": \"Client connected!\",\"clientid\":\""+socket.id+"\"}");
+});
+
+socket.on('connectionresponse',function(msg){//connection acceptance event
+console.log("Received from server: "+msg);
+alert("Wait for a player to be connected!");
+disableboard();
+});
+
+socket.on('gamestart',function(){
+    alert("Game Started!");
+});
+
+socket.on('makemove',function(){
+    enableboard();
+
+});
+
+socket.on('opponentsmovesent',function(idplayed){
+    updateopponentsmove(idplayed);
+    
+});
+
+socket.on('EndOfGame',function(msg){
+    socket.disconnect();
+    alert(msg);
+    //socket.close();
+    window.location.href="index.html";
+});
+
+socket.on('ConnectionReject',function(msg){//connection rejection
+    console.log(msg);
+    socket.close();
+});
+
+function sendwin(){
+    socket.emit('WinCase');
+}
+
+function senddraw(){
+    socket.emit('DrawCase');
+}
+
+function closingConnection(){
+    socket.close();
+}
+
+window.onunload= function() {
+    socket.disconnect();
+}
+window.onbeforeunload= function() {
+    socket.disconnect();
+}
+window.onclose= function() {
+    socket.disconnect();
+}
 numberofclicks=0;
 var board= new Array(3);
 for (var i=0;i<=2;i++){
@@ -20,14 +79,23 @@ function makemove(id){
     document.getElementById(id).innerHTML="<img src=imgs/"+letter+".png style=\"width:100px;height:100px;\">";//load the appropriate png into the table which represents the letter
     document.getElementById(id).style.pointerEvents="none";//disable events into the blocks after a move id done
     board[id.charAt(5)][id.charAt(6)]=letter;
-
     
     socket.emit('receivemove',"{\"data\":\""+id+"\"}");
  
-
+    disableboard();
     checkforwin();
+    checkfordraw();
    // alert(id); 
 }
+
+function updateopponentsmove(id){
+    var letter=playwithletter(); //Change X to O and opposite every time a move is done
+    document.getElementById(id).innerHTML="<img src=imgs/"+letter+".png style=\"width:100px;height:100px;\">";//load the appropriate png into the table which represents the letter
+    document.getElementById(id).style.pointerEvents="none";//disable events into the blocks after a move id done
+    board[id.charAt(5)][id.charAt(6)]=letter; 
+    
+}
+
 function playwithletter(){
            var letter;
            if (numberofclicks%2==0){
@@ -40,6 +108,20 @@ function playwithletter(){
             return letter;
            
 }
+function checkfordraw(){
+    arrayisfull=true;
+    for (var i=0;i<=2;i++){
+        for (var j=0;j<=2;j++){
+            if(board[i][j]=="-"){
+                arrayisfull=false;
+            }
+        }
+    }
+    if(arrayisfull){
+        senddraw();
+    }
+}
+
 function checkforwin(){
          //Check every column
          for (var i=0;i<=2;i++){
@@ -48,8 +130,8 @@ function checkforwin(){
                     document.getElementById("block"+j.toString()+i.toString()).style.backgroundColor="red";
                 }  
                 disableboard();
-
-                alert(board[0][i]+"s wins!!!");
+                sendwin();
+                //alert(board[0][i]+"s wins!!!");
                 for (var j=0;j<=2;j++){
                     document.getElementById("block"+j.toString()+i.toString()).style.backgroundColor="white";
                 }  
@@ -64,7 +146,8 @@ function checkforwin(){
                     document.getElementById("block"+i.toString()+j.toString()).style.backgroundColor="red";
                 }  
                 disableboard();
-                alert(board[i][0]+"s wins!!!");
+                //alert(board[i][0]+"s wins!!!");
+                sendwin();
                 for (var j=0;j<=2;j++){
                     document.getElementById("block"+i.toString()+j.toString()).style.backgroundColor="white";
                 }  
@@ -77,7 +160,8 @@ function checkforwin(){
                 document.getElementById("block"+i.toString()+i.toString()).style.backgroundColor="red";
             }  
             disableboard();
-            alert(board[0][0]+"s wins!!!");
+            sendwin();
+            //alert(board[0][0]+"s wins!!!");
             for (var i=0;i<=2;i++){
                 document.getElementById("block"+i.toString()+i.toString()).style.backgroundColor="white";
             } 
@@ -89,7 +173,8 @@ function checkforwin(){
                 document.getElementById("block"+i.toString()+(2-i).toString()).style.backgroundColor="red";
             }  
             disableboard();
-            alert(board[0][2]+"s wins!!!");
+            sendwin();
+            //alert(board[0][2]+"s wins!!!");
             for (var i=0;i<=2;i++){
                 document.getElementById("block"+i.toString()+(2-i).toString()).style.backgroundColor="white";
             } 
@@ -106,3 +191,15 @@ function disableboard(){
         }
     }
 }
+
+function enableboard(){
+    for (var i=0;i<=2;i++){
+        for (var j=0;j<=2;j++){
+            if(board[i][j]=="-"){
+                document.getElementById("block"+i.toString()+j.toString()).style.pointerEvents="auto";//enable events into the empty blocks after a move id done
+            }
+        }
+    }
+}
+
+

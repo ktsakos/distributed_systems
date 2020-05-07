@@ -1,16 +1,117 @@
 <!DOCTYPE html>
 <html>
- <head>
-  <title>Board Games</title>
-
-  <meta charset="utf-8"> 
-
-  
- </head>
-<body>
-   <h1>Chess</h1>
-   
-
-  </div>
-</body>
+    <head>
+        <title>Chess Game</title>
+        <link rel="shortcut icon" href="imgs/favicon-16x16.png">
+        <meta charset="UTF-8">
+        <script src="//cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js" integrity="sha256-yr4fRk/GU1ehYJPAs8P4JlTgu0Hdsp4ZKrx8bDEDC3I=" crossorigin="anonymous"></script>
+        <link rel="stylesheet" type="text/css" href="css/chess.css">
+        <script type="text/javascript" src="js/chess.js"></script> 
+    </head>
+    <body>
+      <h1>Chess</h1>
+        <table class="chess-board">
+            <tbody>
+                <tr>
+                    <th></th>
+                    <th>a</th>
+                    <th>b</th>
+                    <th>c</th>
+                    <th>d</th>
+                    <th>e</th>
+                    <th>f</th>
+                    <th>g</th>
+                    <th>h</th>
+                </tr>
+                <tr>
+                    <th>8</th>
+                    <td onmouseout="unchooseblock(this)" onmouseover="chooseblock(this)" class="light"><div>&#9820;</div></td>
+                    <td onmouseout="unchooseblock(this)" onmouseover="chooseblock(this)" class="dark"><div>&#9822;</div></td>
+                    <td onmouseout="unchooseblock(this)" onmouseover="chooseblock(this)"class="light"><div>&#9821;</div></td>
+                    <td onmouseout="unchooseblock(this)" onmouseover="chooseblock(this)"class="dark"><div>&#9819;</div></td>
+                    <td onmouseout="unchooseblock(this)" onmouseover="chooseblock(this)"class="light"><div>&#9818;</div></td>
+                    <td onmouseout="unchooseblock(this)" onmouseover="chooseblock(this)"class="dark"><div>&#9821;</div></td>
+                    <td onmouseout="unchooseblock(this)" onmouseover="chooseblock(this)"class="light"><div>&#9822;</div></td>
+                    <td onmouseout="unchooseblock(this)" onmouseover="chooseblock(this)"class="dark"><div>&#9820;</div></td>
+                </tr>
+                <tr>
+                    <th>7</th>
+                    <td onmouseout="unchooseblock(this)" onmouseover="chooseblock(this)" class="dark"><div>&#9823;</div></td>
+                    <td onmouseout="unchooseblock(this)" onmouseover="chooseblock(this)" class="light"><div>&#9823;</div></td>
+                    <td onmouseout="unchooseblock(this)" onmouseover="chooseblock(this)" class="dark"><div>&#9823;</div></td>
+                    <td onmouseout="unchooseblock(this)" onmouseover="chooseblock(this)" class="light"><div>&#9823;</div></td>
+                    <td onmouseout="unchooseblock(this)" onmouseover="chooseblock(this)" class="dark"><div>&#9823;</div></td>
+                    <td onmouseout="unchooseblock(this)" onmouseover="chooseblock(this)" class="light"><div>&#9823;</div></td>
+                    <td onmouseout="unchooseblock(this)" onmouseover="chooseblock(this)" class="dark"><div>&#9823;</div></td>
+                    <td onmouseout="unchooseblock(this)" onmouseover="chooseblock(this)" class="light"><div>&#9823;</div></td>
+                </tr>
+                <tr>
+                    <th>6</th>
+                    <td onmouseout="unchooseblock(this)" onmouseover="chooseblock(this)" class="light"><div></div></td>
+                    <td onmouseout="unchooseblock(this)" onmouseover="chooseblock(this)" class="dark"><div></div></td>
+                    <td onmouseout="unchooseblock(this)" onmouseover="chooseblock(this)" class="light"><div></div></td>
+                    <td onmouseout="unchooseblock(this)" onmouseover="chooseblock(this)" class="dark"><div></div></td>
+                    <td onmouseout="unchooseblock(this)" onmouseover="chooseblock(this)" class="light"><div></div></td>
+                    <td onmouseout="unchooseblock(this)" onmouseover="chooseblock(this)" class="dark"><div></div></td>
+                    <td onmouseout="unchooseblock(this)" onmouseover="chooseblock(this)" class="light"><div></div></td>
+                    <td onmouseout="unchooseblock(this)" onmouseover="chooseblock(this)" class="dark"><div></div></td>
+                </tr>
+                <tr>
+                    <th>5</th>
+                    <td onmouseout="unchooseblock(this)" onmouseover="chooseblock(this)" class="dark"><div></div></td>
+                    <td onmouseout="unchooseblock(this)" onmouseover="chooseblock(this)" class="light"><div></div></td>
+                    <td onmouseout="unchooseblock(this)" onmouseover="chooseblock(this)" class="dark"><div></div></td>
+                    <td onmouseout="unchooseblock(this)" onmouseover="chooseblock(this)" class="light"><div></div></td>
+                    <td onmouseout="unchooseblock(this)" onmouseover="chooseblock(this)" class="dark"><div></div></td>
+                    <td onmouseout="unchooseblock(this)" onmouseover="chooseblock(this)" class="light"><div></div></td>
+                    <td onmouseout="unchooseblock(this)" onmouseover="chooseblock(this)" class="dark"><div></div></td>
+                    <td onmouseout="unchooseblock(this)" onmouseover="chooseblock(this)" class="light"><div></div></td>
+                </tr>
+                <tr>
+                    <th>4</th>
+                    <td onmouseout="unchooseblock(this)" onmouseover="chooseblock(this)" class="light"><div></div></td>
+                    <td onmouseout="unchooseblock(this)" onmouseover="chooseblock(this)" class="dark"><div></div></td>
+                    <td onmouseout="unchooseblock(this)" onmouseover="chooseblock(this)" class="light"><div></div></td>
+                    <td onmouseout="unchooseblock(this)" onmouseover="chooseblock(this)" class="dark"><div></div></td>
+                    <td onmouseout="unchooseblock(this)" onmouseover="chooseblock(this)" class="light"><div></div></td>
+                    <td onmouseout="unchooseblock(this)" onmouseover="chooseblock(this)" class="dark"><div></div></td>
+                    <td onmouseout="unchooseblock(this)" onmouseover="chooseblock(this)" class="light"><div></div></td>
+                    <td onmouseout="unchooseblock(this)" onmouseover="chooseblock(this)" class="dark"><div></div></td>
+                </tr>
+                <tr>
+                    <th>3</th>
+                    <td onmouseout="unchooseblock(this)" onmouseover="chooseblock(this)" class="dark"><div></div></td>
+                    <td onmouseout="unchooseblock(this)" onmouseover="chooseblock(this)" class="light"><div></div></td>
+                    <td onmouseout="unchooseblock(this)" onmouseover="chooseblock(this)" class="dark"><div></div></td>
+                    <td onmouseout="unchooseblock(this)" onmouseover="chooseblock(this)" class="light"><div></div></td>
+                    <td onmouseout="unchooseblock(this)" onmouseover="chooseblock(this)" class="dark"><div></div></td>
+                    <td onmouseout="unchooseblock(this)" onmouseover="chooseblock(this)" class="light"><div></div></td>
+                    <td onmouseout="unchooseblock(this)" onmouseover="chooseblock(this)" class="dark"><div></div></td>
+                    <td onmouseout="unchooseblock(this)" onmouseover="chooseblock(this)" class="light"><div></div></td>
+                </tr>
+                <tr>
+                    <th>2</th>
+                    <td onmouseout="unchooseblock(this)" onmouseover="chooseblock(this)" class="light"><div>&#9817;</div></td>
+                    <td onmouseout="unchooseblock(this)" onmouseover="chooseblock(this)" class="dark"><div>&#9817;</div></td>
+                    <td onmouseout="unchooseblock(this)" onmouseover="chooseblock(this)" class="light"><div>&#9817;</div></td>
+                    <td onmouseout="unchooseblock(this)" onmouseover="chooseblock(this)" class="dark"><div>&#9817;</div></td>
+                    <td onmouseout="unchooseblock(this)" onmouseover="chooseblock(this)" class="light"><div>&#9817;</div></td>
+                    <td onmouseout="unchooseblock(this)" onmouseover="chooseblock(this)" class="dark"><div>&#9817;</div></td>
+                    <td onmouseout="unchooseblock(this)" onmouseover="chooseblock(this)" class="light"><div>&#9817;</div></td>
+                    <td onmouseout="unchooseblock(this)" onmouseover="chooseblock(this)" class="dark"><div>&#9817;</div></td>
+                </tr>
+                <tr>
+                    <th>1</th>
+                    <td onmouseout="unchooseblock(this)" onmouseover="chooseblock(this)" class="dark"><div>&#9814;</div></td>
+                    <td onmouseout="unchooseblock(this)" onmouseover="chooseblock(this)" class="light"><div>&#9816;</div></td>
+                    <td onmouseout="unchooseblock(this)" onmouseover="chooseblock(this)" class="dark"><div>&#9815;</div></td>
+                    <td onmouseout="unchooseblock(this)" onmouseover="chooseblock(this)" class="light"><div>&#9813;</div></td>
+                    <td onmouseout="unchooseblock(this)" onmouseover="chooseblock(this)" class="dark"><div>&#9812;</div></td>
+                    <td onmouseout="unchooseblock(this)" onmouseover="chooseblock(this)" class="light"><div>&#9815;</div></td>
+                    <td onmouseout="unchooseblock(this)" onmouseover="chooseblock(this)" class="dark"><div>&#9816;</div></td>
+                    <td onmouseout="unchooseblock(this)" onmouseover="chooseblock(this)" class="light"><div>&#9814;</div></td>
+                </tr>
+            </tbody>
+        </table>
+    </body>
 </html>
