@@ -60,7 +60,7 @@ def SendResult():
     emit('EndOfGame',"You lost!",room=switchClient(request.sid))
 
 @socketio.on('WinCaseChess')
-def SendResult():
+def SendResultChess():
     emit('EndOfGame',"You lost!",room=request.sid)
     emit('EndOfGame',"You won!",room=switchClient(request.sid))
 

@@ -35,7 +35,7 @@ socket.on('gamestart',function(){
     alert("Game Started!");
 });
 
-socket.on('makemove',function(){//Time to play,emit changes after a movement done on receivemove of playmaster
+socket.on('makemove',function(){//Time to play
     EnableBoard();
 });
 
@@ -86,15 +86,15 @@ function EnableBoard(){//Disable the events on empty blocks and the player's blo
         //White player's turn and the King is under attack (Sax case) and there are no possible movements to protect him
         if(CheckSach(board,"white")==true && CheckForPat("white")==true){
             DisableBoard();//End of the Game!
-            alert("Rua Mat!!!Blacks win!!!");
             socket.emit('WinCaseChess');
+            alert("Rua Mat!!!Blacks win!!!");
             return;//May redirection of the index page
         }
         //White player's turn and the King is not under attack but there are no valid movements (Pat-Draw Case)
         else if(CheckForPat("white")==true){
             DisableBoard();
-            alert("Pat!!!Nobody wins!It's a draw result!!");
             socket.emit('DrawCase');
+            alert("Pat!!!Nobody wins!It's a draw result!!");
             return;//May redirection of the index page
         }
         //White player's turn and the King is under attack but there are possible movements to protect him
@@ -119,12 +119,14 @@ function EnableBoard(){//Disable the events on empty blocks and the player's blo
          //Black player's turn and the King is under attack (Sax case) and there are no possible movements to protect him
          if(CheckSach(board,"black")==true && CheckForPat("black")==true){
             DisableBoard();//End of the Game!
+            socket.emit('WinCaseChess');
             alert("Rua Mat!!!Whites win!!!");
             return;//May redirection of the index page
         }
         //Black player's turn and the King is not under attack but there are no valid movements (Pat-Draw Case)
         else if(CheckForPat("black")==true){
             DisableBoard();
+            socket.emit('DrawCase');
             alert("Pat!!!Nobody wins!It's a draw result!!");
             return;//May redirection of the index page
         }
@@ -275,7 +277,7 @@ function makemove(element){
         positionoffullblock=childElement.id;//take block's position
         valueoffullblock=childElement.innerHTML;//take block's value
         CleanArray(permitedpositions);//In case we have a new pawn choice for movement clean array with candidate positions
-        EnableBoard();
+        //EnableBoard();
         if(childElement.innerHTML=="\u2659"){//Click on white pawn
             if(board[positionrow+1][positioncol]=="-" && positionrow+1<8){
                 permitedpositions.push("block"+String(positionrow+1)+String(positioncol));
@@ -609,7 +611,7 @@ function makemove(element){
         board[parseInt(positionoffullblock.charAt(5))][parseInt(positionoffullblock.charAt(6))]="-"; //erase old value from the board table
         CheckForPromotion(childElement,valueoffullblock);
         numberofmoves++;
-        EnableBoard();
+        //EnableBoard();
         for(var i=0;i<permitedpositions.length;i++){
             unchooseblock(document.getElementById(permitedpositions[i]).parentNode);
         }
@@ -1229,10 +1231,16 @@ function CheckForPat(player){//Check if there are not possible movements for a p
         for(var i=0;i<8;i++){
             for(var j=0;j<8;j++){
                 if(board[i][j]=="\u2659"){//Check for white pawn
-                    if(i+1<8 && j-1>=0){
+                    if(i+1<8 && board[i+1][j]=="-"){
+                        candidatepos.push("block"+String(i+1)+String(j));
+                    }
+                    if(i+1<8 && board[i+1][j]=="-" && board[i+2][j]=="-"){
+                        candidatepos.push("block"+String(i+2)+String(j));
+                    }
+                    if(i+1<8 && j-1>=0 && board[i+1][j-1]!="-" && blackUnicodes.includes(board[i+1][j-1])){
                         candidatepos.push("block"+String(i+1)+String(j-1));
                     }
-                    if(i+1<8 && j+1<8){
+                    if(i+1<8 && j+1<8 && board[i+1][j+1]!="-" && blackUnicodes.includes(board[i+1][j+1])){
                         candidatepos.push("block"+String(i+1)+String(j+1));
                     }
                 }
@@ -1467,10 +1475,16 @@ function CheckForPat(player){//Check if there are not possible movements for a p
         for(var i=0;i<8;i++){
             for(var j=0;j<8;j++){
                 if(board[i][j]=="\u265F"){//Check for black pawn
-                    if(i-1>=0 && j-1>=0){
+                    if(i-1>=0 && board[i-1][j]=="-"){
+                        candidatepos.push("block"+String(i-1)+String(j));
+                    }
+                    if(i-2>=0 && board[i-1][j]=="-" && board[i-2][j]=="-"){
+                        candidatepos.push("block"+String(i-2)+String(j));
+                    }
+                    if(i-1>=0 && j-1>=0 && board[i-1][j-1]!="-" && whiteUnicodes.includes(board[i-1][j-1])){
                         candidatepos.push("block"+String(i-1)+String(j-1));
                     }
-                    if(i-1>=0 && j+1<8){
+                    if(i-1>=0 && j+1<8 && board[i-1][j+1]!="-" && whiteUnicodes.includes(board[i-1][j+1])){
                         candidatepos.push("block"+String(i-1)+String(j+1));
                     }
                     //May i have to add the en passat case
