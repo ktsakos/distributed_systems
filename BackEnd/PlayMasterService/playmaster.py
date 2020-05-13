@@ -48,10 +48,21 @@ def handle_my_custom_event(jsondata):
     emit('opponentsmovesent',data["data"],room=nextclient)
     emit('makemove',room=nextclient)
 
+@socketio.on('receivemovechess')
+def handle_my_custom_event(table):
+    nextclient=switchClient(request.sid)
+    emit('opponentsmovesent',table,room=nextclient)
+    emit('makemove',room=nextclient)
+
 @socketio.on('WinCase')
 def SendResult():
     emit('EndOfGame',"You won!",room=request.sid)
     emit('EndOfGame',"You lost!",room=switchClient(request.sid))
+
+@socketio.on('WinCaseChess')
+def SendResult():
+    emit('EndOfGame',"You lost!",room=request.sid)
+    emit('EndOfGame',"You won!",room=switchClient(request.sid))
 
 @socketio.on('DrawCase')
 def SendResult():
