@@ -1243,6 +1243,11 @@ function CheckForPat(player){//Check if there are not possible movements for a p
                     if(i+1<8 && j+1<8 && board[i+1][j+1]!="-" && blackUnicodes.includes(board[i+1][j+1])){
                         candidatepos.push("block"+String(i+1)+String(j+1));
                     }
+                    if(EnPassant!=""){
+                        if(parseInt(EnPassant.charAt(5))==i && (parseInt(EnPassant.charAt(6))-j==1 || parseInt(EnPassant.charAt(6))-j==-1)){
+                            candidatepos.push("block"+String(i+1)+EnPassant.charAt(6));
+                        }
+                    }
                 }
                 else if(board[i][j]=="\u2656"){//Check for white tower
                     var temprow=i+1;
@@ -1422,29 +1427,54 @@ function CheckForPat(player){//Check if there are not possible movements for a p
                 }
                 else if(board[i][j]=="\u2654"){//Check for white King
                     if(i+1<8 && j+1<8 && (board[i+1][j+1]=="-" || blackUnicodes.includes(board[i+1][j+1]))){
-                        candidatepos.push("block"+String(i+1)+String(j+1));
+                        if(CheckForThreat(board,"block"+String(i+1)+String(j+1),"black")){
+                            candidatepos.push("block"+String(i+1)+String(j+1));
+                        }                    
                     }
                     if(j+1<8 && (board[i][j+1]=="-" || blackUnicodes.includes(board[i][j+1]))){
-                        candidatepos.push("block"+String(i)+String(j+1));
+                        if(CheckForThreat(board,"block"+String(i)+String(j+1),"black")){
+                            candidatepos.push("block"+String(i)+String(j+1));
+                        }                    
                     }
                     if(i-1>=0 && j+1<8 && (board[i-1][j+1]=="-" || blackUnicodes.includes(board[i-1][j+1]))){
-                        candidatepos.push("block"+String(i-1)+String(j+1));
+                        if(CheckForThreat(board,"block"+String(i-1)+String(j+1),"black")){
+                            candidatepos.push("block"+String(i-1)+String(j+1));
+                        }                    
                     }
                     if(i-1>=0 && (board[i-1][j]=="-" || blackUnicodes.includes(board[i-1][j]))){
-                        candidatepos.push("block"+String(i-1)+String(j));
-                    }
+                        if(CheckForThreat(board,"block"+String(i-1)+String(j),"black")){
+                            candidatepos.push("block"+String(i-1)+String(j));
+                        }                   
+                     }
                     if(i-1>=0 && j-1>=0 && (board[i-1][j-1]=="-" || blackUnicodes.includes(board[i-1][j-1]))){
-                        candidatepos.push("block"+String(i-1)+String(j-1));
+                        if(CheckForThreat(board,"block"+String(i-1)+String(j-1),"black")){
+                            candidatepos.push("block"+String(i-1)+String(j-1));
+                        }                    
                     }
                     if(j-1>=0 && (board[i][j-1]=="-" || blackUnicodes.includes(board[i][j-1]))){
-                        candidatepos.push("block"+String(i)+String(j-1));
+                        if(CheckForThreat(board,"block"+String(i)+String(j-1),"black")){
+                            candidatepos.push("block"+String(i)+String(j-1));
+                        }                    
                     }
                     if(i+1<8 && j-1>=0 && (board[i+1][j-1]=="-" || blackUnicodes.includes(board[i+1][j-1]))){
-                        candidatepos.push("block"+String(i+1)+String(j-1));
+                        if(CheckForThreat(board,"block"+String(i+1)+String(j-1),"black")){
+                            candidatepos.push("block"+String(i+1)+String(j-1));
+                        }                    
                     }
                     if(i+1<8 && (board[i+1][j]=="-" || blackUnicodes.includes(board[i+1][j]))){
-                        candidatepos.push("block"+String(i+1)+String(j));
+                        if(CheckForThreat(board,"block"+String(i+1)+String(j),"black")){
+                            candidatepos.push("block"+String(i+1)+String(j));
+                        }                    
                     }
+                    //White King's big roke statement
+                    if(WhiteKingHasMoved==false && WhiteTowerBigRoke==false && CheckForThreat(board,"block02","black")==false && CheckForThreat(board,"block03","black")==false && CheckForThreat(board,"block04","black")==false && board[0][1]=="-" && board[0][2]=="-" && board[0][3]=="-"){
+                        candidatepos.push("block02");
+                    }
+                    //White King's small roke statement
+                    if(WhiteKingHasMoved==false && WhiteTowerSmallRoke==false && CheckForThreat(board,"block04","black")==false && CheckForThreat(board,"block05","black")==false && CheckForThreat(board,"block06","black")==false && board[0][5]=="-" && board[0][6]=="-"){
+                        candidatepos.push("block06");
+                    }
+
                 }
                 //After taking the possible positions of a pawn for movement
                 //I check the table guessing that every time the player makes a movement from them
@@ -1487,7 +1517,11 @@ function CheckForPat(player){//Check if there are not possible movements for a p
                     if(i-1>=0 && j+1<8 && board[i-1][j+1]!="-" && whiteUnicodes.includes(board[i-1][j+1])){
                         candidatepos.push("block"+String(i-1)+String(j+1));
                     }
-                    //May i have to add the en passat case
+                    if(EnPassant!=""){
+                        if(parseInt(EnPassant.charAt(5))==i && (parseInt(EnPassant.charAt(6))-j==1 || parseInt(EnPassant.charAt(6))-j==-1)){
+                            candidatepos.push("block"+String(i-1)+EnPassant.charAt(6));
+                        }
+                    }
                 }
                 else if(board[i][j]=="\u265C"){//Check for black tower
                     var temprow=i+1;
@@ -1667,29 +1701,54 @@ function CheckForPat(player){//Check if there are not possible movements for a p
                 }
                 else if(board[i][j]=="\u265A"){//Check for black King
                     if(i+1<8 && j+1<8 && (board[i+1][j+1]=="-" || whiteUnicodes.includes(board[i+1][j+1]))){
-                        candidatepos.push("block"+String(i+1)+String(j+1));
+                        if(CheckForThreat(board,"block"+String(i+1)+String(j+1),"white")){
+                            candidatepos.push("block"+String(i+1)+String(j+1));
+                        }
                     }
                     if(j+1<8 && (board[i][j+1]=="-" || whiteUnicodes.includes(board[i][j+1]))){
-                        candidatepos.push("block"+String(i)+String(j+1));
+                        if(CheckForThreat(board,"block"+String(i)+String(j+1),"white")){
+                            candidatepos.push("block"+String(i)+String(j+1));
+                        }                    
                     }
                     if(i-1>=0 && j+1<8 && (board[i-1][j+1]=="-" || whiteUnicodes.includes(board[i-1][j+1]))){
-                        candidatepos.push("block"+String(i-1)+String(j+1));
+                        if(CheckForThreat(board,"block"+String(i-1)+String(j+1),"white")){
+                            candidatepos.push("block"+String(i-1)+String(j+1));
+                        }                    
                     }
                     if(i-1>=0 && (board[i-1][j]=="-" || whiteUnicodes.includes(board[i-1][j]))){
-                        candidatepos.push("block"+String(i-1)+String(j));
+                        if(CheckForThreat(board,"block"+String(i-1)+String(j),"white")){
+                            candidatepos.push("block"+String(i-1)+String(j));
+                        }                    
                     }
                     if(i-1>=0 && j-1>=0 && (board[i-1][j-1]=="-" || whiteUnicodes.includes(board[i-1][j-1]))){
-                        candidatepos.push("block"+String(i-1)+String(j-1));
+                        if(CheckForThreat(board,"block"+String(i-1)+String(j-1),"white")){
+                            candidatepos.push("block"+String(i-1)+String(j-1));
+                        }                    
                     }
                     if(j-1>=0 && (board[i][j-1]=="-" || whiteUnicodes.includes(board[i][j-1]))){
-                        candidatepos.push("block"+String(i)+String(j-1));
+                        if(CheckForThreat(board,"block"+String(i)+String(j-1),"white")){
+                            candidatepos.push("block"+String(i)+String(j-1));
+                        }                    
                     }
                     if(i+1<8 && j-1>=0 && (board[i+1][j-1]=="-" || whiteUnicodes.includes(board[i+1][j-1]))){
-                        candidatepos.push("block"+String(i+1)+String(j-1));
+                        if(CheckForThreat(board,"block"+String(i+1)+String(j-1),"white")){
+                            candidatepos.push("block"+String(i+1)+String(j-1));
+                        }                    
                     }
                     if(i+1<8 && (board[i+1][j]=="-" || whiteUnicodes.includes(board[i+1][j]))){
-                        candidatepos.push("block"+String(i+1)+String(j));
+                        if(CheckForThreat(board,"block"+String(i+1)+String(j),"white")){
+                            candidatepos.push("block"+String(i+1)+String(j));
+                        }                    
                     }
+                    //Black King's big roke statement
+                    if(BlackKingHasMoved==false && BlackTowerBigRoke==false && CheckForThreat(board,"block72","white")==false && CheckForThreat(board,"block73","white")==false && CheckForThreat(board,"block74","white")==false && board[7][1]=="-" && board[7][2]=="-" && board[7][3]=="-"){
+                        candidatepos.push("block72");
+                    }
+                    //Black King's small roke statement
+                    if(BlackKingHasMoved==false && BlackTowerSmallRoke==false && CheckForThreat(board,"block74","white")==false && CheckForThreat(board,"block75","white")==false && CheckForThreat(board,"block76","white")==false && board[7][5]=="-" && board[7][6]=="-"){
+                        candidatepos.push("block76");
+                    }
+
                 }
                 //After taking the possible positions of a pawn for movement
                 //I check the table guessing that every time the player makes a movement from them
