@@ -524,7 +524,7 @@ function makemove(element){
         }
         else if(childElement.innerHTML=="\u2654" || childElement.innerHTML=="\u265A"){//Click on white or black King
             if(positionrow+1<8 && positioncol+1<8 && (board[positionrow+1][positioncol+1]=="-" || (childElement.innerHTML=="\u2654" && blackUnicodes.includes(board[positionrow+1][positioncol+1])) || (childElement.innerHTML=="\u265A" && whiteUnicodes.includes(board[positionrow+1][positioncol+1])))){
-                //Last checking to avoid the King to be moved in a position under attach by the opponent
+                //Last checking to avoid the King to be moved in a position under attack by the opponent
                 if((blackUnicodes.includes(childElement.innerHTML) && CheckForThreat("block"+String(positionrow+1)+String(positioncol+1),"white")==false) || (whiteUnicodes.includes(childElement.innerHTML) && CheckForThreat("block"+String(positionrow+1)+String(positioncol+1),"black")==false)){
                     permitedpositions.push("block"+String(positionrow+1)+String(positioncol+1));
                 }
@@ -1427,42 +1427,42 @@ function CheckForPat(player){//Check if there are not possible movements for a p
                 }
                 else if(board[i][j]=="\u2654"){//Check for white King
                     if(i+1<8 && j+1<8 && (board[i+1][j+1]=="-" || blackUnicodes.includes(board[i+1][j+1]))){
-                        if(CheckForThreat(board,"block"+String(i+1)+String(j+1),"black")){
+                        if(CheckForThreat(board,"block"+String(i+1)+String(j+1),"black")==false){
                             candidatepos.push("block"+String(i+1)+String(j+1));
                         }                    
                     }
                     if(j+1<8 && (board[i][j+1]=="-" || blackUnicodes.includes(board[i][j+1]))){
-                        if(CheckForThreat(board,"block"+String(i)+String(j+1),"black")){
+                        if(CheckForThreat(board,"block"+String(i)+String(j+1),"black")==false){
                             candidatepos.push("block"+String(i)+String(j+1));
                         }                    
                     }
                     if(i-1>=0 && j+1<8 && (board[i-1][j+1]=="-" || blackUnicodes.includes(board[i-1][j+1]))){
-                        if(CheckForThreat(board,"block"+String(i-1)+String(j+1),"black")){
+                        if(CheckForThreat(board,"block"+String(i-1)+String(j+1),"black")==false){
                             candidatepos.push("block"+String(i-1)+String(j+1));
                         }                    
                     }
                     if(i-1>=0 && (board[i-1][j]=="-" || blackUnicodes.includes(board[i-1][j]))){
-                        if(CheckForThreat(board,"block"+String(i-1)+String(j),"black")){
+                        if(CheckForThreat(board,"block"+String(i-1)+String(j),"black")==false){
                             candidatepos.push("block"+String(i-1)+String(j));
                         }                   
                      }
                     if(i-1>=0 && j-1>=0 && (board[i-1][j-1]=="-" || blackUnicodes.includes(board[i-1][j-1]))){
-                        if(CheckForThreat(board,"block"+String(i-1)+String(j-1),"black")){
+                        if(CheckForThreat(board,"block"+String(i-1)+String(j-1),"black")==false){
                             candidatepos.push("block"+String(i-1)+String(j-1));
                         }                    
                     }
                     if(j-1>=0 && (board[i][j-1]=="-" || blackUnicodes.includes(board[i][j-1]))){
-                        if(CheckForThreat(board,"block"+String(i)+String(j-1),"black")){
+                        if(CheckForThreat(board,"block"+String(i)+String(j-1),"black")==false){
                             candidatepos.push("block"+String(i)+String(j-1));
                         }                    
                     }
                     if(i+1<8 && j-1>=0 && (board[i+1][j-1]=="-" || blackUnicodes.includes(board[i+1][j-1]))){
-                        if(CheckForThreat(board,"block"+String(i+1)+String(j-1),"black")){
+                        if(CheckForThreat(board,"block"+String(i+1)+String(j-1),"black")==false){
                             candidatepos.push("block"+String(i+1)+String(j-1));
                         }                    
                     }
                     if(i+1<8 && (board[i+1][j]=="-" || blackUnicodes.includes(board[i+1][j]))){
-                        if(CheckForThreat(board,"block"+String(i+1)+String(j),"black")){
+                        if(CheckForThreat(board,"block"+String(i+1)+String(j),"black")==false){
                             candidatepos.push("block"+String(i+1)+String(j));
                         }                    
                     }
@@ -1701,42 +1701,42 @@ function CheckForPat(player){//Check if there are not possible movements for a p
                 }
                 else if(board[i][j]=="\u265A"){//Check for black King
                     if(i+1<8 && j+1<8 && (board[i+1][j+1]=="-" || whiteUnicodes.includes(board[i+1][j+1]))){
-                        if(CheckForThreat(board,"block"+String(i+1)+String(j+1),"white")){
+                        if(CheckForThreat(board,"block"+String(i+1)+String(j+1),"white")==false){
                             candidatepos.push("block"+String(i+1)+String(j+1));
                         }
                     }
                     if(j+1<8 && (board[i][j+1]=="-" || whiteUnicodes.includes(board[i][j+1]))){
-                        if(CheckForThreat(board,"block"+String(i)+String(j+1),"white")){
+                        if(CheckForThreat(board,"block"+String(i)+String(j+1),"white")==false){
                             candidatepos.push("block"+String(i)+String(j+1));
                         }                    
                     }
                     if(i-1>=0 && j+1<8 && (board[i-1][j+1]=="-" || whiteUnicodes.includes(board[i-1][j+1]))){
-                        if(CheckForThreat(board,"block"+String(i-1)+String(j+1),"white")){
+                        if(CheckForThreat(board,"block"+String(i-1)+String(j+1),"white")==false){
                             candidatepos.push("block"+String(i-1)+String(j+1));
                         }                    
                     }
                     if(i-1>=0 && (board[i-1][j]=="-" || whiteUnicodes.includes(board[i-1][j]))){
-                        if(CheckForThreat(board,"block"+String(i-1)+String(j),"white")){
+                        if(CheckForThreat(board,"block"+String(i-1)+String(j),"white")==false){
                             candidatepos.push("block"+String(i-1)+String(j));
                         }                    
                     }
                     if(i-1>=0 && j-1>=0 && (board[i-1][j-1]=="-" || whiteUnicodes.includes(board[i-1][j-1]))){
-                        if(CheckForThreat(board,"block"+String(i-1)+String(j-1),"white")){
+                        if(CheckForThreat(board,"block"+String(i-1)+String(j-1),"white")==false){
                             candidatepos.push("block"+String(i-1)+String(j-1));
                         }                    
                     }
                     if(j-1>=0 && (board[i][j-1]=="-" || whiteUnicodes.includes(board[i][j-1]))){
-                        if(CheckForThreat(board,"block"+String(i)+String(j-1),"white")){
+                        if(CheckForThreat(board,"block"+String(i)+String(j-1),"white")==false){
                             candidatepos.push("block"+String(i)+String(j-1));
                         }                    
                     }
                     if(i+1<8 && j-1>=0 && (board[i+1][j-1]=="-" || whiteUnicodes.includes(board[i+1][j-1]))){
-                        if(CheckForThreat(board,"block"+String(i+1)+String(j-1),"white")){
+                        if(CheckForThreat(board,"block"+String(i+1)+String(j-1),"white")==false){
                             candidatepos.push("block"+String(i+1)+String(j-1));
                         }                    
                     }
                     if(i+1<8 && (board[i+1][j]=="-" || whiteUnicodes.includes(board[i+1][j]))){
-                        if(CheckForThreat(board,"block"+String(i+1)+String(j),"white")){
+                        if(CheckForThreat(board,"block"+String(i+1)+String(j),"white")==false){
                             candidatepos.push("block"+String(i+1)+String(j));
                         }                    
                     }
