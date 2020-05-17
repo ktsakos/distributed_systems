@@ -47,7 +47,7 @@ CREATE TABLE `users` (
 INSERT INTO `users` (`username`, `password`, `name`, `surname`, `email`, `id`, `date_created`, `role`, `timestamp`, `token`) VALUES
 ('tsakostas7', '1234', 'Kostas', 'Tsakos', 'ktsakos7@gmail.com', 1, '2020-04-14 22:33:10', 'Official', '2020-05-05 18:31:15.799886', 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyIjoidHNha29zdGFzNyIsImV4cCI6MTU4ODcwMzQ1NH0.bjGGR9L2jraYQRrkIwoUQfgRwQgSvum9AhkHyZTf4tg'),
 ('tsoukalas7', '7777', 'takis', 'tsoukalas', 'tsoukalas@gmail.com', 2, '2020-04-25 22:33:10', 'Player', '2020-05-05 18:39:15.799886', 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyIjoidHNha29zdGFzNyIsImV4cCI6MdU4ODcwM6Q1NH0.bjGGR9L2jraYQRrkIwoUQfgRwQgSvum9AhkHyZTf4tg'),
-('ktzavara', '12345', 'Katerina', 'Tzavara', 'ktzavara3@gmail.com', 3, '2020-04-20 23:17:59', 'Admin', '2020-05-05 18:45:15.799886', 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyIjoidHNha29zdGFzNyIsImV4cCI6MTU48DcwMzQggg0.bjGGR9L2jraYQRrkIwoUQfgRwQgSvum9AhkHyZTf4tg'),
+('ktzavara', '12345', 'Katerina', 'Tzavara', 'ktzavara3@gmail.com', 3, '2020-04-20 23:17:59', 'Admin', '2020-05-05 18:45:15.799886', 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyIjoidHNha29zdGFzNyIsImV4cCI6MTU48DcwMzQggg0.bjGGR9L2jraYQRrkIwoUQfgRwQgSvum9AhkHyZTf4tg');
 
 --
 -- Indexes for dumped tables
