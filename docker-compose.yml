@@ -93,9 +93,10 @@ services:
             app_subnet:
                 ipv4_address: 172.16.1.6 
 networks:
-    app_subnet:
-        external: 
-            true
+    app_subnet: 
+        ipam:
+            config: 
+                - subnet: 172.16.1.0/24   
 volumes: 
     persistent:
     persistent2: 
