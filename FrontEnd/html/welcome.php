@@ -28,7 +28,7 @@ $token = $_SESSION["token"];
    </div>
 
    <div style="margin-left:10px;">
-   <?php echo '<a href="http://172.16.1.4:5000/assign?token='.$token.'"">Assign Roles</a>'; ?>
+   <?php echo '<a href="http://147.27.60.48:5000/assign?token='.$token.'"">Assign Roles</a>'; ?>
    </div>
    <br>
 

@@ -4,7 +4,15 @@ from flask_socketio import SocketIO,emit,disconnect
 import sys
 import logging
 import json
+import pymongo
 logging.basicConfig(level=logging.DEBUG)
+
+myclient=pymongo.MongoClient("mongodb://root:password@172.16.1.9:27017/")
+mydb=myclient["playmasterdb"]
+mycol=mydb["games"]
+mydict={"game":"1","Board":""}
+mycol.insert_one(mydict)
+#print (myclient.list_database_names(),file=sys.stderr)
 
 app=Flask(__name__)
 app.config['SECRET_KEY']='secret!' #for enabling encryption
@@ -51,6 +59,9 @@ def handle_my_custom_event(jsondata):
 @socketio.on('receivemovechess')
 def handle_my_custom_event(table):
     nextclient=switchClient(request.sid)
+    myquery={"game":"1"}
+    newvalues={"$set": {"Board":table}}
+    mycol.update_one(myquery,newvalues)
     emit('opponentsmovesent',table,room=nextclient)
     emit('makemove',room=nextclient)
 
@@ -82,4 +93,4 @@ def handle_connectionClosing():
     #disconnect(request.sid)
 
 if __name__=='__main__':
-    socketio.run(app)
+    socketio.run(app,host='0.0.0.0',port=5000)

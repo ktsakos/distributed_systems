@@ -46,24 +46,44 @@ services:
             - persistent:/var/lib/mysql 
         networks:
             app_subnet:
-                ipv4_address: 172.16.1.7   
+                ipv4_address: 172.16.1.7
+    mongo:
+        image: mongo
+        restart: always
+        environment:
+         MONGO_INITDB_ROOT_USERNAME: root
+         MONGO_INITDB_ROOT_PASSWORD: password
+        volumes:
+           - persistent3:/data/db
+        networks: 
+            app_subnet:
+                ipv4_address: 172.16.1.9
+    mongo-express:
+        image: mongo-express
+        depends_on:
+            - mongo
+        restart: always
+        ports:
+        - 8081:8081
+        environment:
+         ME_CONFIG_MONGODB_ADMINUSERNAME: root
+         ME_CONFIG_MONGODB_ADMINPASSWORD: password
+        networks: 
+            app_subnet:
+                ipv4_address: 172.16.1.10   
     phpmyadmin:
         image: phpmyadmin/phpmyadmin
-        links: 
-            - db
         ports:
             - 8000:80
+        restart: always
         environment:
-            MYSQL_USER: dbuser
-            MYSQL_PASSWORD: dbpassword
-            MYSQL_ROOT_PASSWORD: password 
             PMA_ARBITRARY: 1 
     playmaster:
         build: ./BackEnd/PlayMasterService
         depends_on:
-            - db
+            - mongo
         ports:
-            - 5001:5001
+            - 5001:5000
         links: 
             - db
         networks:
@@ -73,6 +93,7 @@ services:
         build: ./BackEnd/authentication_service 
         depends_on:
             - db
+        restart: always
         ports: 
             - 5000:5000
         links:
@@ -99,7 +120,8 @@ networks:
                 - subnet: 172.16.1.0/24   
 volumes: 
     persistent:
-    persistent2: 
+    persistent2:
+    persistent3:
 
 
 

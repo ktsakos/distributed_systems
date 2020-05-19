@@ -60,7 +60,7 @@ socket.on('EndOfGame',function(msg){
     socket.disconnect();
     alert(msg);
     //socket.close();
-    window.location.href="index.html";
+    window.location.href="welcome.php";
 });
 
 socket.on('ConnectionReject',function(msg){//connection rejection
