@@ -73,8 +73,8 @@ def token_required(f):
                 return render_template('login_again.html')
             """
             
-            # if time_passed < 3 minutes
-            if (time_passed < 3): 
+            # if time_passed < 10 minutes
+            if (time_passed < 10): 
                 session['flag'] = 'true' # edw mporw na valw pass
             else: 
                 return jsonify({ "response": "false" }) 

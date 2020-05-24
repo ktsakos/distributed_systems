@@ -154,10 +154,10 @@ input[type=submit]:hover {
 
     <div class="form">
 
-      <form action="" method="POST">
+      <form name="myForm" action="" onsubmit="return validateForm()" method="POST">
           <div class="row">
               <div class="col-25">
-                  <label for="fname">Username</label>
+                  <label for="content">Username</label>
               </div>
               <div class="col-75">
                   <input type="text" name="content" id="content" placeholder="Your username..">
@@ -165,7 +165,7 @@ input[type=submit]:hover {
           </div>
           <div class="row">
               <div class="col-25">
-                  <label for="fname">Password</label>
+                  <label for="content1">Password</label>
               </div>
               <div class="col-75">
                   <input type="text" name="content1" id="content1" placeholder="Your password..">
@@ -173,7 +173,7 @@ input[type=submit]:hover {
           </div>
           <div class="row">
               <div class="col-25">
-                  <label for="fname">First Name</label>
+                  <label for="content2">First Name</label>
               </div>
               <div class="col-75">
                   <input type="text" name="content2" id="content2" placeholder="Your name..">
@@ -181,7 +181,7 @@ input[type=submit]:hover {
           </div>
               <div class="row">
                   <div class="col-25">
-                      <label for="lname">Last Name</label> 
+                      <label for="content3">Last Name</label> 
                   </div>
                   <div class="col-75">
                       <input type="text" name="content3" id="content3" placeholder="Your last name..">
@@ -189,7 +189,7 @@ input[type=submit]:hover {
           </div>
           <div class="row">
               <div class="col-25">
-                  <label for="country">Email address</label>
+                  <label for="content4">Email address</label>
               </div>
               <div class="col-75">
                   <div class="col-75">
@@ -210,3 +210,34 @@ input[type=submit]:hover {
 </body>
 </html>
 
+
+
+<script>
+function validateForm() {
+  var a = document.forms["myForm"]["content"].value;
+  var b = document.forms["myForm"]["content1"].value;
+  var c = document.forms["myForm"]["content2"].value;
+  var d = document.forms["myForm"]["content3"].value; 
+  var e = document.forms["myForm"]["content4"].value; 
+  if (a == "") {
+    alert("Username must be filled out");
+    return false;
+  }
+  if (b == "") {
+    alert("Password must be filled out");
+    return false;
+  }
+  if (c == "") {
+    alert("First name must be filled out");
+    return false;
+  }
+  if (d == "") {
+    alert("Last name must be filled out");
+    return false;
+  }
+  if (e == "") {
+    alert("Email address must be filled out");
+    return false;
+  }
+}
+</script>
