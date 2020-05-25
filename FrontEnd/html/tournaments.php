@@ -38,11 +38,6 @@ tr:nth-child(even) {
 
    <h1>Board Games</h1>
    <p>Choose a tournament:</p>
-   <div style="margin-left:10px;">
-   </div>
-
-   <p>Available tournaments:</p>
-  <div style="margin-left:10px;">
 
   <?php  
 
@@ -77,7 +72,8 @@ tr:nth-child(even) {
       <tr>
         <th>Tournament name</th>
         <th>Game type</th>
-        <th>Joined users</th>
+        <th>Joined players</th>
+        <th>Maximum number of players</p>
         <th>Creator</th>
         <th>Action</th>
       </tr>
@@ -92,6 +88,7 @@ tr:nth-child(even) {
         <td>".$myArray[$x][6]."</td>
         <td>".$myArray[$x][0]."</td>
         <td>".$myArray[$x][2]."</td>
+        <td>".$myArray[$x][1]."</td>
         <td>".$myArray[$x][4]."</td>
         <td><a href='join_tournament.php?id=$id'>Join tournament</a></td>
       </tr>
