@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Φιλοξενητής: 192.168.1.4:3307
--- Χρόνος δημιουργίας: 23 Μάη 2020 στις 20:31:12
+-- Χρόνος δημιουργίας: 25 Μάη 2020 στις 13:07:15
 -- Έκδοση διακομιστή: 5.7.30
 -- Έκδοση PHP: 7.4.5
 
@@ -31,8 +31,32 @@ CREATE TABLE `practice_plays` (
   `home` varchar(60) NOT NULL,
   `away` varchar(60) NOT NULL,
   `result` varchar(20) NOT NULL,
+  `gametype` varchar(60) NOT NULL,
   `playID` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Άδειασμα δεδομένων του πίνακα `practice_plays`
+--
+
+INSERT INTO `practice_plays` (`home`, `away`, `result`, `gametype`, `playID`) VALUES
+('tsakostas7', 'ktzavara', 'tie', 'chess', 20),
+('tsakostas7', 'ktzavara', 'home', 'chess', 21),
+('random', 'ktzavara', 'away', 'chess', 22),
+('random', 'ktzavara', 'tie', 'chess', 23),
+('emiltzav', 'ktzavara', 'tie', 'chess', 24),
+('emiltzav', 'ktzavara', 'tie', 'tic-tac-toe', 25),
+('emiltzav', 'ktzavara', 'home', 'tic-tac-toe', 26),
+('emiltzav', 'ktzavara', 'away', 'tic-tac-toe', 27),
+('emiltzav', 'akis', 'home', 'tic-tac-toe', 28),
+('emiltzav', 'akis', 'away', 'tic-tac-toe', 30),
+('tsakostas7', 'akis', 'home', 'tic-tac-toe', 31),
+('tsakostas7', 'akis', 'home', 'tic-tac-toe', 32),
+('tsakostas7', 'akis', 'home', 'chess', 33),
+('tsakostas7', 'akis', 'home', 'chess', 34),
+('akis', 'tsakostas7', 'away', 'chess', 35),
+('akis', 'tsakostas7', 'away', 'tic-tac-toe', 36),
+('tsakostas7', 'akis', 'away', 'chess', 37);
 
 -- --------------------------------------------------------
 
@@ -55,11 +79,12 @@ CREATE TABLE `practice_scores` (
 --
 
 INSERT INTO `practice_scores` (`username`, `wins`, `ties`, `losses`, `plays`, `total_score`, `available`) VALUES
-('tsakostas7', 1, 1, 0, 2, 4, 1),
-('mpampis', 0, 0, 0, 0, 0, 1),
-('akis', 0, 0, 1, 1, 0, 0),
-('ktzavara', 0, 1, 0, 1, 1, 0),
-('random', 1, 1, 1, 3, 4, 0);
+('emiltzav', 3, 2, 2, 7, 11, 0),
+('random', 0, 1, 1, 2, 1, 0),
+('tsakostas7', 7, 1, 1, 9, 22, 0),
+('player8', 0, 0, 0, 0, 0, 0),
+('akis', 2, 0, 7, 9, 6, 0),
+('ktzavara', 2, 4, 2, 8, 10, 0);
 
 -- --------------------------------------------------------
 
@@ -105,18 +130,20 @@ CREATE TABLE `tournaments` (
   `password` varchar(50) NOT NULL,
   `creator` varchar(50) NOT NULL,
   `tournamentID` int(11) NOT NULL,
-  `name` varchar(100) DEFAULT NULL
+  `name` varchar(100) DEFAULT NULL,
+  `started` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
 -- Άδειασμα δεδομένων του πίνακα `tournaments`
 --
 
-INSERT INTO `tournaments` (`gametype`, `maxnumofusers`, `joinedusers`, `password`, `creator`, `tournamentID`, `name`) VALUES
-('chess', 16, 8, 'myfirstchessgame', 'ktzavara', 1, 'First chess tournament '),
-('tictactoe', 8, 4, 'trilizaraaaareee', 'tsakostas7', 2, 'The Big Battle'),
-('chess', 16, 11, 'safekey', 'tsakostas7', 3, 'supertournament '),
-('tictactoe', 32, 0, 'safekey', 'ktzavara', 4, 'tournouaraaaaa');
+INSERT INTO `tournaments` (`gametype`, `maxnumofusers`, `joinedusers`, `password`, `creator`, `tournamentID`, `name`, `started`) VALUES
+('chess', 16, 9, 'myfirstchessgame', 'ktzavara', 1, 'First chess tournament ', 1),
+('tictactoe', 8, 4, 'trilizaraaaareee', 'tsakostas7', 2, 'The Big Battle', 0),
+('chess', 16, 11, 'safekey', 'tsakostas7', 3, 'supertournament ', 0),
+('tictactoe', 32, 1, 'safekey', 'ktzavara', 4, 'tournouaraaaaa', 0),
+('chess', 16, 1, 'rrgffgdfgf', 'ktzavara', 5, 'ooooo', 0);
 
 -- --------------------------------------------------------
 
@@ -138,10 +165,10 @@ CREATE TABLE `tournament_players` (
 INSERT INTO `tournament_players` (`player`, `active`, `tournamentID`, `total_score`) VALUES
 ('iskis', 0, 2, 0),
 ('ktzavara', 0, 2, 0),
-('emiltzav', 1, 3, 0),
+('emiltzav', 0, 3, 0),
 ('roussos', 0, 3, 0),
 ('elli', 1, 3, 2),
-('mairoula67', 1, 3, 0),
+('mairoula67', 0, 3, 0),
 ('marios', 1, 3, 0),
 ('manos96', 0, 3, 0),
 ('george26', 1, 3, 0),
@@ -166,7 +193,11 @@ INSERT INTO `tournament_players` (`player`, `active`, `tournamentID`, `total_sco
 ('manolios', 0, 3, 3),
 ('pantelis', 0, 3, 6),
 ('random', 1, 3, 2),
-('random', 1, 4, 5);
+('random', 1, 4, 5),
+('player20', 1, 1, 0),
+('valantis', 1, 3, 0),
+('ktzavara', 1, 5, 0),
+('ktzavara', 1, 4, 0);
 
 -- --------------------------------------------------------
 
@@ -194,11 +225,11 @@ INSERT INTO `tournament_plays` (`tournamentID`, `home`, `away`, `result`, `round
 (3, 'tsoukalas', 'tsakostas7', 'home', 16, 41),
 (3, 'emiltzav', 'roussos', 'home', 16, 42),
 (3, 'elli', 'fontas', 'home', 8, 43),
-(3, 'mairoula67', 'petros', '', 8, 44),
-(3, 'lol', 'marios', '', 8, 45),
+(3, 'mairoula67', 'petros', 'away', 8, 44),
+(3, 'valantis', 'marios', '', 8, 45),
 (3, 'petros', 'manos96', 'home', 16, 47),
 (3, 'tsoukalas7', 'john73', 'home', 16, 48),
-(3, 'emiltzav', 'mitsos', '', 16, 49),
+(3, 'emiltzav', 'mitsos', 'away', 16, 49),
 (3, 'fontas', 'teo', 'home', 16, 50),
 (3, 'iskis', 'elli', '', 4, 51),
 (1, 'player1', 'player2', 'away', 8, 52),
@@ -212,7 +243,8 @@ INSERT INTO `tournament_plays` (`tournamentID`, `home`, `away`, `result`, `round
 (3, 'manolios', 'pantelis', 'tie', 4, 64),
 (3, 'manolios', 'pantelis', 'tie', 4, 65),
 (3, 'manolios', 'pantelis', 'away', 4, 66),
-(3, 'pantelis', 'iskis', 'away', 2, 67);
+(3, 'pantelis', 'iskis', 'away', 2, 67),
+(3, 'petros', 'mitsos', '', 4, 68);
 
 --
 -- Ευρετήρια για άχρηστους πίνακες
@@ -257,7 +289,7 @@ ALTER TABLE `tournament_plays`
 -- AUTO_INCREMENT για πίνακα `practice_plays`
 --
 ALTER TABLE `practice_plays`
-  MODIFY `playID` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `playID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=38;
 
 --
 -- AUTO_INCREMENT για πίνακα `scores`
@@ -269,13 +301,13 @@ ALTER TABLE `scores`
 -- AUTO_INCREMENT για πίνακα `tournaments`
 --
 ALTER TABLE `tournaments`
-  MODIFY `tournamentID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `tournamentID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT για πίνακα `tournament_plays`
 --
 ALTER TABLE `tournament_plays`
-  MODIFY `playID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=68;
+  MODIFY `playID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=69;
 
 --
 -- Περιορισμοί για άχρηστους πίνακες
