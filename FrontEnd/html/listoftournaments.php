@@ -91,7 +91,7 @@ tr:nth-child(even) {
 
   for ($x = 0; $x <= $size-1; $x++) {
 
-    if($myArray[$x][7] == "0")
+    if($myArray[$x][7] == "1")
     {
       $myArray[$x][7] = "Yes";
     }
