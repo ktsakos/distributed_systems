@@ -26,6 +26,9 @@ $token = $_SESSION["token"];
    <div style="margin-left:10px;">
    <?php echo "<a href='chess.php'>Play Chess</a>"; ?>
    </div>
+   <div style="margin-left:10px;">
+   <?php echo "<a href='tournaments.php'>Join a tournament now! </a>"; ?>
+   </div>
 
    <div style="margin-left:10px;">
    <?php echo '<a href="http://147.27.60.48:5000/assign?token='.$token.'"">Assign Roles</a>'; ?>

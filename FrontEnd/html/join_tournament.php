@@ -6,8 +6,8 @@ $score = $_SESSION['score'];
 $flag = $_SESSION['flag'];
 $token = $_SESSION["token"]; 
 
-//$username = 'iskis'; 
-$tournamentID = 2;
+// ID of selected tournament
+$tournamentID = $_GET["id"];
 
 $curl = curl_init();
 

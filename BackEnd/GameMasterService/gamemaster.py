@@ -104,8 +104,8 @@ def createtournament():
   
   # insert this tournament in the tournaments table  
   mycursor = mydb.cursor()
-  sql = "INSERT INTO tournaments (gametype, maxnumofusers, joinedusers, password, creator, name) VALUES (%s, %s, %s, %s, %s, %s)"
-  val = (gameType, maxNumOfUsers, 0, password, creator, tournamName) 
+  sql = "INSERT INTO tournaments (gametype, maxnumofusers, joinedusers, password, creator, name, started) VALUES (%s, %s, %s, %s, %s, %s, %s)"
+  val = (gameType, maxNumOfUsers, 0, password, creator, tournamName, 0) 
   try: 
     mycursor.execute(sql, val)
     mydb.commit()
@@ -113,6 +113,7 @@ def createtournament():
 
   except: 
     return jsonify( {"response": "error"} ) 
+
 
 
 
@@ -133,10 +134,40 @@ def viewtournaments():
     tournaments = mycursor.fetchall()
 
     if tournaments:
-      return render_template('all_tournaments.html', tournaments = tournaments)
+      return jsonify(tournaments)
+      #return render_template('all_tournaments.html', tournaments = tournaments)
 
     else: 
       return jsonify({"Message": "no_tournaments_found"}) 
+
+
+
+
+
+
+# view all tournaments (admin)
+@app.route('/get_available_tournaments', methods=['GET'])
+def get_available_tournaments():
+
+  if request.method == 'GET':
+
+    # retrieve all tournaments  
+    mycursor = mydb.cursor()
+    sql = "SELECT * FROM `tournaments` WHERE joinedusers < maxnumofusers and started = 0"  
+    mycursor.execute(sql)
+
+    # fetch all records, return results
+    tournaments = mycursor.fetchall()
+
+    if tournaments:
+      return jsonify(tournaments)
+      #return render_template('all_tournaments.html', tournaments = tournaments)
+
+    else: 
+      return jsonify({"Message": "no_tournaments_found"}) 
+
+
+
 
 
 
@@ -434,7 +465,7 @@ def endtournmatch():
 
 
 
-# update DB data when a match is complete (win/lose or tie)
+# update DB, match two players in tournaments_plays table
 @app.route('/matchplayers', methods=['POST'])
 def matchplayers():
   
@@ -512,7 +543,7 @@ def begintournament():
       l = int(l)
       e = int(l/2-1) 
 
-      #   
+      # match players (i with i+1)  
       for i in range(0,e+1):
 
         i = 2*i
@@ -532,6 +563,12 @@ def begintournament():
         mycursor.execute(sql, val) 
         mydb.commit()
 
+
+      # update "started" flag, declares that the tournament just has started (so it can't accept a new player) 
+      sql2 = "UPDATE tournaments SET started = 1 WHERE tournamentID = %s" 
+      val2 = (tournamentID,)
+      mycursor.execute(sql2, val2)
+      mydb.commit()
         
       return jsonify( {"response": player} ), 200   
 
