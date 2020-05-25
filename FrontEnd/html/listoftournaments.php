@@ -18,17 +18,41 @@ if($_SESSION["role"] != 'Admin')
 table {
   font-family: arial, sans-serif;
   border-collapse: collapse;
-  width: 70%;
+  width: 90%;
 }
 
 td, th {
   border: 1px solid #5500de;
   text-align: left;
-  padding: 4px;
+  padding: 5px;
 }
 
 tr:nth-child(even) {
-  background-color: #dddddd;
+  background-color: #8da6b5;
+}
+
+.tooltip {
+  position: relative;
+  display: inline-block;
+  border-bottom: 1px dotted black;
+}
+
+.tooltip .tooltiptext {
+  visibility: hidden;
+  width: 120px;
+  background-color: black;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 5px 0;
+
+  /* Position the tooltip */
+  position: absolute;
+  z-index: 1;
+}
+
+.tooltip:hover .tooltiptext {
+  visibility: visible;
 }
 </style>
  <head>
@@ -86,10 +110,13 @@ tr:nth-child(even) {
         <th>Safe key (password)</th>
         <th>Creator</th>
         <th>Started</th>
+        <th>Actions</th>
       </tr>
     ";
 
   for ($x = 0; $x <= $size-1; $x++) {
+
+    $id = $myArray[$x][5]; 
 
     if($myArray[$x][7] == "1")
     {
@@ -110,6 +137,7 @@ tr:nth-child(even) {
         <td>".$myArray[$x][3]."</td>
         <td>".$myArray[$x][4]."</td>
         <td>".$myArray[$x][7]."</td>
+        <td> <div class='tooltip'> <a href='begin_tournament.php?id=$id'> <img src='imgs/start.png' alt='start' width='60' height='60'> </a> <span class='tooltiptext'>Start tournament</span> </div>  <div class='tooltip'> <img src='imgs/delete.png' alt='start' width='60' height='60'> <span class='tooltiptext'>Delete tournament</span> </div> </td>
       </tr>
     ";
 

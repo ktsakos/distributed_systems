@@ -570,7 +570,7 @@ def begintournament():
       mycursor.execute(sql2, val2)
       mydb.commit()
         
-      return jsonify( {"response": player} ), 200   
+      return jsonify( {"response": "OK"} ), 200   
 
     else: 
 
