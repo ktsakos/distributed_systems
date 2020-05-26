@@ -768,19 +768,14 @@ def getpracticeplays():
 
 
 
-# retrieve all practice plays of a specific player 
+# retrieve all finished tournament plays (of all players)
 @app.route('/get_tournament_plays', methods=['GET'])
 def get_tournament_plays():
 
-  # get JSON request with tournament's data  
-  content = request.get_json()
-  player = content["username"] 
-
-  # retrieve all available players 
+  # retrieve all finished tournament plays 
   mycursor = mydb.cursor()
-  sql = "SELECT * FROM tournament_plays  WHERE home = %s or away = %s"  
-  val = (player, player)   
-  mycursor.execute(sql, val)
+  sql = "SELECT DISTINCT a.tournamentID, home, away, result, round, gametype, name FROM (SELECT DISTINCT tournamentID, home, away, result, round FROM `tournament_plays` WHERE result <> '') a JOIN (SELECT tournamentID, gametype, name FROM `tournaments`) b ON a.tournamentID = b.tournamentID"  
+  mycursor.execute(sql)
 
   # fetch all records, return results
   allplays = mycursor.fetchall()
@@ -813,9 +808,34 @@ def delete_tournament():
 
 
 
+     
+
+
+# get all active players 
+@app.route('/get_all_players', methods=['GET'])
+def get_all_players():
+  
+  if request.method == 'GET':
+
+    # get all players from Gamemaster DB
+    mycursor = mydb.cursor()
+    sql = "SELECT DISTINCT player FROM tournament_players UNION SELECT DISTINCT username FROM practice_scores"
+    mycursor.execute(sql)
+
+    # fetch all records
+    all_active_players = mycursor.fetchall()
+
+    if all_active_players:
+      return jsonify(all_active_players), 200 
+
+    else: 
+      return jsonify({"response": "no_active_players"}), 200  
+
+
+
+
 
 '''
-
 
 # retrieve all available opponents for a specific player 
 @app.route('/availableopponents', methods=['GET'])

@@ -28,6 +28,7 @@ $token = $_SESSION["token"];
 #element1 {display:inline-block;margin-right:10px; width:180px;} 
 #element2 {display:inline-block; width:180px; } 
 #element3 {display:inline-block; width:180px; } 
+#element4 {display:inline-block; margin-right: 10px; margin-top:100px; width:180px; } 
 
 .w3-lobster {
   font-family: "Lobster", serif;
@@ -134,13 +135,25 @@ $token = $_SESSION["token"];
 
    <div id="element3">   
       <div class="menu">
+         <?php echo '<span title="Tournament Results"> <a href="all_tourn_plays.php"> <b style="color:black;"> </b> <img src="imgs/results.png" alt="chess" width="100" height="100"> </a> </span>'; ?>
+      </div> 
+   </div> 
+
+   <div id="element4">   
+      <div class="menu">
+         <?php echo '<span title="Total Ranking"> <a href="total_ranking.php"> <b style="color:black;"> </b> <img src="imgs/ranking.png" alt="chess" width="120" height="120"> </a> </span>'; ?>
+      </div> 
+   </div> 
+
+   <div id="element4">   
+      <div class="menu">
          <?php echo '<span title="Assign Roles"> <a href="http://172.16.1.4:5000/assign?token='.$token.'""> <b style="color:black;"> </b> <img src="imgs/roles.png" alt="chess" width="100" height="100"> </a> </span>'; ?>
       </div> 
    </div> 
 
-   <div id="element3">   
+   <div id="element4">   
       <div class="menu">
-         <?php echo '<span title="Administration Panel (Admin Only)"> <a href="listoftournaments.php"> <b style="color:black;"> </b> <img src="imgs/admin.png" alt="chess" width="100" height="100"> </a> </span>'; ?>
+         <?php echo '<span title="Administration Panel (Admin Only)"> <a href="listoftournaments.php"> <b style="color:black;"> </b> <img src="imgs/admin.png" alt="chess" width="110" height="110"> </a> </span>'; ?>
       </div> 
    </div> 
 
