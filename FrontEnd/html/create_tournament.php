@@ -4,6 +4,10 @@ session_start();
 
 $username = $_SESSION['username']; // name of user 
 
+if($_SESSION["role"] != "Admin" && $_SESSION["role"] != "Official")
+{
+  header('Location: onlyforadmin.php');
+}
 
 // if user submits the tournament form
 if (isset($_POST["submit"])) {  

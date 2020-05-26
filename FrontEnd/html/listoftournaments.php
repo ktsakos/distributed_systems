@@ -137,7 +137,7 @@ tr:nth-child(even) {
         <td>".$myArray[$x][3]."</td>
         <td>".$myArray[$x][4]."</td>
         <td>".$myArray[$x][7]."</td>
-        <td> <div class='tooltip'> <a href='begin_tournament.php?id=$id'> <img src='imgs/start.png' alt='start' width='60' height='60'> </a> <span class='tooltiptext'>Start tournament</span> </div>  <div class='tooltip'> <img src='imgs/delete.png' alt='start' width='60' height='60'> <span class='tooltiptext'>Delete tournament</span> </div> </td>
+        <td> <div class='tooltip'> <a href='begin_tournament.php?id=$id'> <img src='imgs/start.png' alt='start' width='60' height='60'> </a> <span class='tooltiptext'>Start tournament</span> </div>  <div class='tooltip'> <a href='delete_tournament.php?id=$id'> <img src='imgs/delete.png' alt='start' width='60' height='60'> </a> <span class='tooltiptext'>Delete tournament</span> </div> </td>
       </tr>
     ";
 

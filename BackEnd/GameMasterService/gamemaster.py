@@ -595,7 +595,7 @@ def next_tourn_matches():
 
     # check if player is active in these tournaments and find the matches that have no result yet, search in two tables using a JOIN query
     mycursor = mydb.cursor()
-    sql = "SELECT DISTINCT home, away, playID FROM (SELECT tournamentID, player FROM tournament_players WHERE active = 1 and player = %s) a JOIN (SELECT tournamentID, home, away, playID FROM tournament_plays WHERE result = '') b ON a.tournamentID = b.tournamentID AND a.player = b.home OR a.player = b.away"
+    sql = "SELECT DISTINCT home, away, playID FROM (SELECT DISTINCT tournamentID, player FROM `tournament_players` WHERE active = 1 and player = %s) a JOIN (SELECT DISTINCT tournamentID, home, away, playID FROM `tournament_plays` WHERE result = '') b ON a.tournamentID = b.tournamentID AND a.player = b.home OR a.player = b.away"
     val = (player,)
     mycursor.execute(sql, val) 
 
@@ -763,6 +763,54 @@ def getpracticeplays():
 
   else: 
     return jsonify({"response": "no_plays_found"}), 200
+
+
+
+
+
+# retrieve all practice plays of a specific player 
+@app.route('/get_tournament_plays', methods=['GET'])
+def get_tournament_plays():
+
+  # get JSON request with tournament's data  
+  content = request.get_json()
+  player = content["username"] 
+
+  # retrieve all available players 
+  mycursor = mydb.cursor()
+  sql = "SELECT * FROM tournament_plays  WHERE home = %s or away = %s"  
+  val = (player, player)   
+  mycursor.execute(sql, val)
+
+  # fetch all records, return results
+  allplays = mycursor.fetchall()
+
+  if allplays:
+      return jsonify(allplays), 200  
+
+  else: 
+    return jsonify({"response": "no_plays_found"}), 200
+
+
+
+
+# delete a specific tournament (admin operation)
+@app.route('/delete_tournament', methods=['POST'])
+def delete_tournament():
+
+  # get JSON request with tournament's ID   
+  content = request.get_json()
+  tournamentID = content["tournamentID"] 
+
+  # delete tournament
+  mycursor = mydb.cursor()
+  sql = "DELETE FROM tournaments WHERE tournamentID = %s"  
+  val = (tournamentID,)   
+  mycursor.execute(sql, val)
+  mydb.commit()
+
+  return jsonify({"response": "OK"}), 200  
+
 
 
 
