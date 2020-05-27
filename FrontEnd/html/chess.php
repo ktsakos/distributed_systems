@@ -13,6 +13,9 @@ $token = $_SESSION['token'];
         <link rel="stylesheet" type="text/css" href="css/chess.css">
     </head>
     <body>
+      <p id="username"><?php echo $username;?></p>
+      <p>You are playing against:</p>
+      <p id="opponent"></p>
       <h1>Chess</h1>
         <table class="chess-board">
             <tbody>

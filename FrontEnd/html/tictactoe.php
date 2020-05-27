@@ -11,11 +11,12 @@ $token = $_SESSION['token'];
   <meta charset="utf-8"> 
   <script src="//cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js" integrity="sha256-yr4fRk/GU1ehYJPAs8P4JlTgu0Hdsp4ZKrx8bDEDC3I=" crossorigin="anonymous"></script>
   <link rel="stylesheet" type="text/css" href="css/tictactoe.css">
-  <script type="text/javascript" src="js/tictoe.js"></script>   
   
  </head>
 <body>
-
+  <p id="username"><?php echo $username;?></p>
+  <p>You are playing against:</p>
+  <p id="opponent"></p>
   <h1>Tic Tac Toe</h1>
   <table>
     <tr>
@@ -34,5 +35,7 @@ $token = $_SESSION['token'];
       <td id="block22" onmouseout="unchooseblock(this)" onmouseover="chooseblock(this)" onclick="makemove(this.id)"></td>
     </tr>
   </table>
+  <script type="text/javascript" src="js/tictoe.js"></script>   
+
 </body>
 </html>

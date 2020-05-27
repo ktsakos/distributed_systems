@@ -1,7 +1,9 @@
 //websocket communication testing
 var socket=io.connect('http://147.27.60.48:5001');
+var username=document.getElementById("username").innerHTML;
+var gametype="tic-tac-toe";
 socket.on('connect',function(){//connection trying event
-    socket.emit('connectionack',"{\"data\": \"Client connected!\",\"clientid\":\""+socket.id+"\"}");
+    socket.emit('connectionack',"{\"username\":\""+ username+"\",\"gametype\":\""+gametype+"\",\"clientid\":\""+socket.id+"\"}");
 });
 
 socket.on('connectionresponse',function(msg){//connection acceptance event
@@ -10,7 +12,8 @@ alert("Wait for a player to be connected!");
 disableboard();
 });
 
-socket.on('gamestart',function(){
+socket.on('gamestart',function(opponent){
+    document.getElementById("opponent").innerHTML=opponent;
     alert("Game Started!");
 });
 
@@ -32,7 +35,7 @@ socket.on('EndOfGame',function(msg){
 });
 
 socket.on('ConnectionReject',function(msg){//connection rejection
-    console.log(msg);
+    alert(msg);
     socket.close();
 });
 
