@@ -8,6 +8,9 @@ $token = $_SESSION["token"];
 <!DOCTYPE html>
 <html>
 <style>
+
+#element {display:inline-block;margin-right:10px; width:180px;} 
+
 table {
   font-family: arial, sans-serif;
   border-collapse: collapse;
@@ -56,6 +59,10 @@ tr:nth-child(even) {
   
  </head>
 <body>
+
+  <div id="element1">   
+    <?php echo "<span title='Home Page'><a href='welcome.php'> <b style='color:black;'> </b> <img src='imgs/home.png' alt='trophy' width='45' height='45'> </a> </span> "; ?>
+  </div>
 
   <h2><u>Total ranking (Standing)</u></h2>
   <div style="margin-left:10px;">
@@ -125,6 +132,7 @@ tr:nth-child(even) {
 
     $scores[$player] = $total_score;
 
+    // sort scores (descending order)
     arsort($scores);
 
   }

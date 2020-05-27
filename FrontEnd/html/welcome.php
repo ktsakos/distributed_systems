@@ -11,9 +11,12 @@ $token = $_SESSION["token"];
 <html>
 <style>
 
+.body {
+   background-blend-mode: lighten;
+}
+
 .menu {
   padding: 50px;
-  background-color: white;
   transition: transform .2s;
   width: 20px;
   height: 20px;
@@ -98,7 +101,7 @@ $token = $_SESSION["token"];
 
   
  </head>
-<body>
+<body style="background-image: url('imgs/background.jpg');">
    <div class="w3-container w3-lobster">
       <p class="w3-xxxlarge">Board Games</p>
    </div>

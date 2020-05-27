@@ -15,6 +15,9 @@ if($_SESSION["role"] != 'Admin')
 <!DOCTYPE html>
 <html>
 <style>
+
+#element {display:inline-block;margin-right:10px; width:180px;} 
+
 table {
   font-family: arial, sans-serif;
   border-collapse: collapse;
@@ -64,11 +67,13 @@ tr:nth-child(even) {
  </head>
 <body>
 
-  <?php echo "<h4 style='margin-right:10px;'> Signed in as: $username </h4>"; ?>
-  <?php echo "<h4 style='margin-right:10px;'> Total score: $score </h4>"; ?>
+  <div id="element1">   
+    <?php echo "<span title='Home Page'><a href='welcome.php'> <b style='color:black;'> </b> <img src='imgs/home.png' alt='trophy' width='45' height='45'> </a> </span> "; ?>
+  </div>
+
   <?php //echo "<h4 style='margin-left:10px;'> Everything is: $flag"; ?>
 
-  <p>Full list of tournaments:</p>
+  <h2><b><u>Full list of tournaments:</u></b></h2>
   <div style="margin-left:10px;">
 
   <?php  

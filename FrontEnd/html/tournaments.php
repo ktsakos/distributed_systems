@@ -10,6 +10,9 @@ $token = $_SESSION["token"];
 <!DOCTYPE html>
 <html>
 <style>
+
+#element {display:inline-block;margin-right:10px; width:180px;} 
+
 table {
   font-family: arial, sans-serif;
   border-collapse: collapse;
@@ -36,7 +39,10 @@ tr:nth-child(even) {
  </head>
 <body>
 
-   <h1>Board Games</h1>
+  <div id="element1">   
+    <?php echo "<span title='Home Page'><a href='welcome.php'> <b style='color:black;'> </b> <img src='imgs/home.png' alt='trophy' width='45' height='45'> </a> </span> "; ?>
+  </div>
+
    <p>Choose a tournament:</p>
 
   <?php  
