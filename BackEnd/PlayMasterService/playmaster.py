@@ -24,6 +24,7 @@ def switchClient(previous):
     else:
         return result["Client1"]
 
+
 def UserAlreadyHasJoined(username):
     myquery={"$or":[{"Player1":username},{"Player2":username}]}
     result=mycol.find(myquery).count()
@@ -55,13 +56,12 @@ def SendResultRemoveCouple(case,clientid1,clientid2):#clientid1 is the one who w
     url='http://172.16.1.6:5000/endpracticematch'
     payload={'player1':home,'player2':away,'result':result,'gameType':gametype}
     pdq=json.dumps(payload)#converts payload to double quotes
-    #print(pdq,file=sys.stderr)
+    print(pdq,file=sys.stderr)
     #convert string to json with json.loads
     req=requests.post(url,json=json.loads(pdq))
     print(req.text,file=sys.stderr)
     resp=json.loads(req.text)
     if(resp["response"]=="OK"):
-        print("Delete chess game",file=sys.stderr)
         #delete the match from mongo
         myquery={"$or":[{"Client1":clientid1},{"Client2":clientid1}]}#just use a clientid to delete the match it participated
         mycol.delete_one(myquery)
@@ -139,9 +139,15 @@ def SendResult():
     
 @socketio.on('disconnect')#When client is disconnected
 def handle_connectionClosing():
-    print("Client with id:"+request.sid+" disconected!",file=sys.stderr)
     #emit('ConnectionClose','Connection closed')#Send message for connection closing
     #disconnect(request.sid)
+    try:#When a client is disconnected after a match has started
+        emit('EndOfGame',"You won!Opponent left the game",room=switchClient(request.sid))
+        #SendResultRemoveCouple("win",switchClient(request.sid),request.sid)#We give a win to the other 
+        #print("Client with id:"+request.sid+" disconected!",file=sys.stderr)
+    except:#in case a player is disconnected before a client join the game
+        query={"Client1":request.sid}
+        mycol.delete_one(query)
 
 if __name__=='__main__':
     socketio.run(app,host='0.0.0.0',port=5000)
