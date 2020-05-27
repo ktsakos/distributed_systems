@@ -11,12 +11,20 @@ $token = $_SESSION["token"];
 <html>
 <style>
 
-.body {
-   background-blend-mode: lighten;
+body::after {
+  content: "";
+  background: url(imgs/background.jpg);
+  opacity: 0.35;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  position: absolute;
+  z-index: -1;   
 }
 
 .menu {
-  padding: 50px;
+  padding: 10px;
   transition: transform .2s;
   width: 20px;
   height: 20px;
@@ -32,6 +40,8 @@ $token = $_SESSION["token"];
 #element2 {display:inline-block; width:180px; } 
 #element3 {display:inline-block; width:180px; } 
 #element4 {display:inline-block; margin-right: 10px; margin-top:100px; width:180px; } 
+#element5 {display:inline-block; margin-right: 10px; margin-top:100px; width:100px; } 
+
 
 .w3-lobster {
   font-family: "Lobster", serif;
@@ -101,7 +111,7 @@ $token = $_SESSION["token"];
 
   
  </head>
-<body style="background-image: url('imgs/background.jpg');">
+<body>
    <div class="w3-container w3-lobster">
       <p class="w3-xxxlarge">Board Games</p>
    </div>
@@ -150,6 +160,12 @@ $token = $_SESSION["token"];
 
    <div id="element4">   
       <div class="menu">
+         <?php echo '<span title="Practice Plays Record"> <a href="all_practice_plays.php"> <b style="color:black;"> </b> <img src="imgs/historic.png" alt="chess" width="100" height="100"> </a> </span>'; ?>
+      </div> 
+   </div> 
+
+   <div id="element4">   
+      <div class="menu">
          <?php echo '<span title="Assign Roles"> <a href="http://172.16.1.4:5000/assign?token='.$token.'""> <b style="color:black;"> </b> <img src="imgs/roles.png" alt="chess" width="100" height="100"> </a> </span>'; ?>
       </div> 
    </div> 
@@ -160,17 +176,22 @@ $token = $_SESSION["token"];
       </div> 
    </div> 
 
-   <br> <br> <br> <br> <br> <br> 
+   <br>
 
-   <?php echo "<h5 style='margin-left:10px;'> Welcome, $username !! </h5>"; ?>
+   <div id="element4">  
 
-   <h5 style='margin-left:10px;'> Your total score is: <?php echo $score; ?></h5> 
+      <?php echo "<h5> Welcome, $username !! </h5>"; ?>
+      <h5> Your total score is: <?php echo $score; ?></h5> 
+      <br>
+      <div style="margin-right: :10px;">
+      <?php echo "<a href='logout.php'>Log out</a>"; ?>
+      </div>
 
-   <br><br>
-   <div style="margin-left:10px;">
-   <?php echo "<a href='logout.php'>Log out</a>"; ?>
-   </div>
 
+
+   </div> 
+
+   
   
 </body>
 </html>

@@ -835,6 +835,38 @@ def get_all_players():
 
 
 
+
+
+# retrieve all tournament matches that a specific player has to play in the current round in all tournaments  
+@app.route('/get_tourn_data', methods=['GET'])
+def get_tourn_data():
+
+  if request.method == 'GET':
+
+    # get JSON request with player's username 
+    content = request.get_json()
+    playID = content["playID"] 
+
+    # check if player is active in these tournaments and find the matches that have no result yet, search in two tables using a JOIN query
+    mycursor = mydb.cursor()
+    sql = "SELECT a.tournamentID, home, away, result, round, gametype, name FROM (SELECT DISTINCT tournamentID, home, away, result, round FROM tournament_plays WHERE playID = %s) a JOIN (SELECT tournamentID, gametype, name FROM tournaments) b ON a.tournamentID = b.tournamentID"
+    val = (playID,)
+    mycursor.execute(sql, val) 
+
+    # fetch all records, return results
+    matches = mycursor.fetchall()
+
+    if matches:
+      return jsonify(matches), 200 
+
+    else: 
+      return jsonify({"response": "no_matches_found"}), 200
+
+
+
+
+
+
 '''
 
 # retrieve all available opponents for a specific player 
