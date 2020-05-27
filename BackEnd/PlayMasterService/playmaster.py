@@ -142,12 +142,13 @@ def handle_connectionClosing():
     #emit('ConnectionClose','Connection closed')#Send message for connection closing
     #disconnect(request.sid)
     try:#When a client is disconnected after a match has started
-        emit('EndOfGame',"You won!Opponent left the game",room=switchClient(request.sid))
+        emit('EndOfGame',"Opponent left the game!Nobody won!",room=switchClient(request.sid))
         #SendResultRemoveCouple("win",switchClient(request.sid),request.sid)#We give a win to the other 
         #print("Client with id:"+request.sid+" disconected!",file=sys.stderr)
     except:#in case a player is disconnected before a client join the game
-        query={"Client1":request.sid}
-        mycol.delete_one(query)
+        pass
+    myquery={"$or":[{"Client1":request.sid},{"Client2":request.sid}]}
+    mycol.delete_one(myquery)
 
 if __name__=='__main__':
     socketio.run(app,host='0.0.0.0',port=5000)
