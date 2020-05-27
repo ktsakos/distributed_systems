@@ -2,14 +2,8 @@
 include 'app_logic.php'; 
 session_start(); 
 $username = $_SESSION['username']; 
-$score = $_SESSION['score'];
-$flag = $_SESSION['flag'];
+//$score = $_SESSION['score'];
 $token = $_SESSION["token"]; 
-
-if($_SESSION["role"] != 'Admin')
-{
-  header('Location: onlyforadmin.php');
-}
 ?>
 
 <!DOCTYPE html>
@@ -25,13 +19,13 @@ table {
 }
 
 td, th {
-  border: 1px solid #5500de;
+  border: 1px solid #000000;
   text-align: left;
   padding: 5px;
 }
 
 tr:nth-child(even) {
-  background-color: #8da6b5;
+  background-color: #b9c9c2;
 }
 
 .tooltip {
@@ -63,17 +57,15 @@ tr:nth-child(even) {
 
   <meta charset="utf-8"> 
 
-  
  </head>
+
 <body>
 
   <div id="element1">   
     <?php echo "<span title='Home Page'><a href='welcome.php'> <b style='color:black;'> </b> <img src='imgs/home.png' alt='trophy' width='45' height='45'> </a> </span> "; ?>
   </div>
 
-  <?php //echo "<h4 style='margin-left:10px;'> Everything is: $flag"; ?>
-
-  <h2><b><u>Full list of tournaments:</u></b></h2>
+  <h2><u>All tournament results</u></h2>
   <div style="margin-left:10px;">
 
   <?php  
@@ -81,7 +73,7 @@ tr:nth-child(even) {
   $curl = curl_init();
 
   curl_setopt_array($curl, array(
-    CURLOPT_URL => "http://172.16.1.6:5000/viewtournaments",
+    CURLOPT_URL => "http://172.16.1.6:5000/get_tournament_plays",
     CURLOPT_RETURNTRANSFER => true,
     CURLOPT_ENCODING => "",
     CURLOPT_MAXREDIRS => 10,
@@ -107,42 +99,74 @@ tr:nth-child(even) {
   echo 
     "<table>
       <tr>
-        <th>TournamentID</th>
+        <th>Tourn. No</th>
         <th>Tournament name</th>
-        <th>Game type</th>
-        <th>Maximum number of users</th>
-        <th>Joined users</th>
-        <th>Safe key (password)</th>
-        <th>Creator</th>
-        <th>Started</th>
-        <th>Actions</th>
+        <th>Player1</th>
+        <th>Player2</th>
+        <th>Winner/Tie</th>
+        <th>Round</th>
+        <th>Gametype</th>
+        <th>Player1 score</th>
+        <th>Player2 score</th>
       </tr>
     ";
 
   for ($x = 0; $x <= $size-1; $x++) {
 
-    $id = $myArray[$x][5]; 
+    $id = $myArray[$x][0]; 
 
-    if($myArray[$x][7] == "1")
+    if($myArray[$x][3] == "home")
     {
-      $myArray[$x][7] = "Yes";
+      $result = $myArray[$x][1];
+      $pl1score = 3;
+      $pl2score = 0;
+      if($myArray[$x][4] == "2")
+      {
+        $pl1score = "23 (CHAMPION) <img src='imgs/trophy.png' alt='trophy' width='100' height='100'>";
+      }
     }
-    else
+    else if($myArray[$x][3] == "away")
     {
-      $myArray[$x][7] = "No"; 
+      $result = $myArray[$x][2]; 
+      $pl1score = 0;
+      $pl2score = 3;
+      if($myArray[$x][4] == "2")
+      {
+        $pl2score = "23 (CHAMPION) <img src='imgs/trophy.png' alt='trophy' width='100' height='100'>";
+      }
+    } 
+    else 
+    {
+      $result = "<b><i>Tie</i></b>";
+      $pl1score = 1;
+      $pl2score = 1;
+    }
+
+    if($myArray[$x][4] == "4")
+    {
+      $round = "Semifinals";
+    }
+    else if($myArray[$x][4] == "2")
+    {
+      $round = "<b><i>Final</i></b>";
+    } 
+    else 
+    {
+      $i = $myArray[$x][4];
+      $round = "Phase of ".$i."";
     }
 
     echo 
     " <tr>
-        <td>".$myArray[$x][5]."</td>
-        <td>".$myArray[$x][6]."</td>
         <td>".$myArray[$x][0]."</td>
+        <td>".$myArray[$x][6]."</td>
         <td>".$myArray[$x][1]."</td>
         <td>".$myArray[$x][2]."</td>
-        <td>".$myArray[$x][3]."</td>
-        <td>".$myArray[$x][4]."</td>
-        <td>".$myArray[$x][7]."</td>
-        <td> <div class='tooltip'> <a href='begin_tournament.php?id=$id'> <img src='imgs/start.png' alt='start' width='60' height='60'> </a> <span class='tooltiptext'>Start tournament</span> </div>  <div class='tooltip'> <a href='delete_tournament.php?id=$id'> <img src='imgs/delete.png' alt='start' width='60' height='60'> </a> <span class='tooltiptext'>Delete tournament</span> </div> </td>
+        <td>".$result."</td>
+        <td>".$round."</td>
+        <td>".$myArray[$x][5]."</td>
+        <td>".$pl1score."</td>
+        <td>".$pl2score."</td>
       </tr>
     ";
 

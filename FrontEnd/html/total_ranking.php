@@ -1,15 +1,8 @@
-<?php 
+<?php  
 include 'app_logic.php'; 
 session_start(); 
 $username = $_SESSION['username']; 
-$score = $_SESSION['score'];
-$flag = $_SESSION['flag'];
-$token = $_SESSION["token"]; 
-
-if($_SESSION["role"] != 'Admin')
-{
-  header('Location: onlyforadmin.php');
-}
+$token = $_SESSION["token"];  
 ?>
 
 <!DOCTYPE html>
@@ -21,17 +14,17 @@ if($_SESSION["role"] != 'Admin')
 table {
   font-family: arial, sans-serif;
   border-collapse: collapse;
-  width: 90%;
+  width: 50%;
 }
 
 td, th {
-  border: 1px solid #5500de;
+  border: 1px solid #4d79ff;
   text-align: left;
   padding: 5px;
 }
 
 tr:nth-child(even) {
-  background-color: #8da6b5;
+  background-color: #e6f9ff;
 }
 
 .tooltip {
@@ -71,17 +64,23 @@ tr:nth-child(even) {
     <?php echo "<span title='Home Page'><a href='welcome.php'> <b style='color:black;'> </b> <img src='imgs/home.png' alt='trophy' width='45' height='45'> </a> </span> "; ?>
   </div>
 
-  <?php //echo "<h4 style='margin-left:10px;'> Everything is: $flag"; ?>
-
-  <h2><b><u>Full list of tournaments:</u></b></h2>
+  <h2><u>Total ranking (Standing)</u></h2>
   <div style="margin-left:10px;">
 
   <?php  
 
+  echo 
+    "<table>
+      <tr>
+        <th>Player</th>
+        <th>Total Score</th>
+      </tr>
+    ";
+
   $curl = curl_init();
 
   curl_setopt_array($curl, array(
-    CURLOPT_URL => "http://172.16.1.6:5000/viewtournaments",
+    CURLOPT_URL => "http://172.16.1.6:5000/get_all_players",
     CURLOPT_RETURNTRANSFER => true,
     CURLOPT_ENCODING => "",
     CURLOPT_MAXREDIRS => 10,
@@ -94,62 +93,65 @@ tr:nth-child(even) {
     ),
   ));
 
-
   $response = curl_exec($curl);
 
   curl_close($curl);
-  //echo $response;
 
   $myArray = json_decode($response, true);
 
   $size  = count($myArray);
 
-  echo 
-    "<table>
-      <tr>
-        <th>TournamentID</th>
-        <th>Tournament name</th>
-        <th>Game type</th>
-        <th>Maximum number of users</th>
-        <th>Joined users</th>
-        <th>Safe key (password)</th>
-        <th>Creator</th>
-        <th>Started</th>
-        <th>Actions</th>
-      </tr>
-    ";
-
   for ($x = 0; $x <= $size-1; $x++) {
 
-    $id = $myArray[$x][5]; 
+    //echo $myArray[$x][0]; 
 
-    if($myArray[$x][7] == "1")
-    {
-      $myArray[$x][7] = "Yes";
-    }
-    else
-    {
-      $myArray[$x][7] = "No"; 
-    }
+    $player = $myArray[$x][0]; 
 
+    $curl = curl_init();
+
+    curl_setopt_array($curl, array(
+      CURLOPT_URL => "http://172.16.1.6:5000/getscore",
+      CURLOPT_RETURNTRANSFER => true,
+      CURLOPT_ENCODING => "",
+      CURLOPT_MAXREDIRS => 10,
+      CURLOPT_TIMEOUT => 0,
+      CURLOPT_FOLLOWLOCATION => true,
+      CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+      CURLOPT_CUSTOMREQUEST => "GET",
+      CURLOPT_POSTFIELDS =>'{ "username": "'.$player.'" }',
+      CURLOPT_HTTPHEADER => array(
+        "Content-Type: application/json"
+      ),
+    ));
+
+    $resp = curl_exec($curl);
+    curl_close($curl);
+
+    $json = json_decode($resp, TRUE); 
+    $total_score = $json['score'];
+
+    $scores[$player] = $total_score;
+
+    // sort scores (descending order)
+    arsort($scores);
+
+  }
+  
+  foreach($scores as $x => $x_value) {
+    $player = $x; 
+    if($x == $username)
+    {
+      $x = "<b style='color:blue'><i>".$x."</i></b>";
+    }
     echo 
     " <tr>
-        <td>".$myArray[$x][5]."</td>
-        <td>".$myArray[$x][6]."</td>
-        <td>".$myArray[$x][0]."</td>
-        <td>".$myArray[$x][1]."</td>
-        <td>".$myArray[$x][2]."</td>
-        <td>".$myArray[$x][3]."</td>
-        <td>".$myArray[$x][4]."</td>
-        <td>".$myArray[$x][7]."</td>
-        <td> <div class='tooltip'> <a href='begin_tournament.php?id=$id'> <img src='imgs/start.png' alt='start' width='60' height='60'> </a> <span class='tooltiptext'>Start tournament</span> </div>  <div class='tooltip'> <a href='delete_tournament.php?id=$id'> <img src='imgs/delete.png' alt='start' width='60' height='60'> </a> <span class='tooltiptext'>Delete tournament</span> </div> </td>
+        <td>".$x."</td>
+        <td>".$x_value."</td>
       </tr>
     ";
-
   }
 
   echo "</table>";
-
       
   ?>
 

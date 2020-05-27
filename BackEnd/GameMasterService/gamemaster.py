@@ -595,7 +595,7 @@ def next_tourn_matches():
 
     # check if player is active in these tournaments and find the matches that have no result yet, search in two tables using a JOIN query
     mycursor = mydb.cursor()
-    sql = "SELECT DISTINCT home, away, playID FROM (SELECT tournamentID, player FROM tournament_players WHERE active = 1 and player = %s) a JOIN (SELECT tournamentID, home, away, playID FROM tournament_plays WHERE result = '') b ON a.tournamentID = b.tournamentID AND a.player = b.home OR a.player = b.away"
+    sql = "SELECT DISTINCT home, away, playID FROM (SELECT DISTINCT tournamentID, player FROM `tournament_players` WHERE active = 1 and player = %s) a JOIN (SELECT DISTINCT tournamentID, home, away, playID FROM `tournament_plays` WHERE result = '') b ON a.tournamentID = b.tournamentID AND a.player = b.home OR a.player = b.away"
     val = (player,)
     mycursor.execute(sql, val) 
 
@@ -766,8 +766,76 @@ def getpracticeplays():
 
 
 
-'''
 
+
+# retrieve all finished tournament plays (of all players)
+@app.route('/get_tournament_plays', methods=['GET'])
+def get_tournament_plays():
+
+  # retrieve all finished tournament plays 
+  mycursor = mydb.cursor()
+  sql = "SELECT DISTINCT a.tournamentID, home, away, result, round, gametype, name FROM (SELECT DISTINCT tournamentID, home, away, result, round FROM `tournament_plays` WHERE result <> '') a JOIN (SELECT tournamentID, gametype, name FROM `tournaments`) b ON a.tournamentID = b.tournamentID"  
+  mycursor.execute(sql)
+
+  # fetch all records, return results
+  allplays = mycursor.fetchall()
+
+  if allplays:
+      return jsonify(allplays), 200  
+
+  else: 
+    return jsonify({"response": "no_plays_found"}), 200
+
+
+
+
+# delete a specific tournament (admin operation)
+@app.route('/delete_tournament', methods=['POST'])
+def delete_tournament():
+
+  # get JSON request with tournament's ID   
+  content = request.get_json()
+  tournamentID = content["tournamentID"] 
+
+  # delete tournament
+  mycursor = mydb.cursor()
+  sql = "DELETE FROM tournaments WHERE tournamentID = %s"  
+  val = (tournamentID,)   
+  mycursor.execute(sql, val)
+  mydb.commit()
+
+  return jsonify({"response": "OK"}), 200  
+
+
+
+     
+
+
+# get all active players 
+@app.route('/get_all_players', methods=['GET'])
+def get_all_players():
+  
+  if request.method == 'GET':
+
+    # get all players from Gamemaster DB
+    mycursor = mydb.cursor()
+    sql = "SELECT DISTINCT player FROM tournament_players UNION SELECT DISTINCT username FROM practice_scores"
+    mycursor.execute(sql)
+
+    # fetch all records
+    all_active_players = mycursor.fetchall()
+
+    if all_active_players:
+      return jsonify(all_active_players), 200 
+
+    else: 
+      return jsonify({"response": "no_active_players"}), 200  
+
+
+
+
+
+'''
 
 # retrieve all available opponents for a specific player 
 @app.route('/availableopponents', methods=['GET'])

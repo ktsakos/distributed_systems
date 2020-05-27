@@ -15,7 +15,7 @@ for ($x = 1; $x <= 8; $x+=1) {
     CURLOPT_FOLLOWLOCATION => true,
     CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
     CURLOPT_CUSTOMREQUEST => "POST",
-    CURLOPT_POSTFIELDS =>'{ "username": "'.$player.'", "tournamentID": 5}',
+    CURLOPT_POSTFIELDS =>'{ "username": "'.$player.'", "tournamentID": 6 }',
     CURLOPT_HTTPHEADER => array(
       "Content-Type: application/json"
     ),
