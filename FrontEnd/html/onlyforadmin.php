@@ -15,6 +15,11 @@ $token = $_SESSION["token"];
   font-family: "Lobster", serif;
 }
 
+.myDiv { 
+  text-align: center;
+}
+
+
 </style>
  <head>
   <title>Board Games</title>
@@ -28,20 +33,22 @@ $token = $_SESSION["token"];
  </head>
 <body>
 
-   <p style="margin-left:10px;"> You are not allowed to enter this page (you are not an Administrator or Official). </p>
+  <div class="myDiv">
 
-   <br><br>
+    <br>
+    <h3><b> You are not allowed to enter this page! You are not an Administrator. </b></h3>
+    <br>
+    <img src="imgs/cantenter.png" alt="error" width="150" height="150">
+    <br><br><br>
+    <div>
+    <?php echo "<a href='welcome.php'><b> Go back to Home Page </b> </a>"; ?>
+    </div>
+    <br>
+    <div>
+    <?php echo "<a href='logout.php'><b> Log out </b> </a>"; ?>
+    </div>
 
-   <div style="margin-left:10px;">
-   <?php echo "<a href='welcome.php'>Go back to Home Page</a>"; ?>
-   </div>
-
-   <br><br>
-   <div style="margin-left:10px;">
-   <?php echo "<a href='logout.php'>Log out</a>"; ?>
-   </div>
-
-
+  </div>
   
 </body>
 </html>

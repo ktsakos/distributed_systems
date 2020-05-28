@@ -11,6 +11,18 @@ session_start();
 
 body {font-family: Arial, Helvetica, sans-serif;}
 
+body::after {
+  content: "";
+  background: url(imgs/background.jpg);
+  opacity: 0.85;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  position: absolute;
+  z-index: -1;   
+}
+
 /* Full-width input fields */
 input[type=text], input[type=password] {
   width: 100%;
@@ -24,7 +36,7 @@ input[type=text], input[type=password] {
 /* Set a style for all buttons */
 button {
   background-color: blue;
-  color: white;
+  color: lightblue;
   padding: 10px 10px;
   margin: 8px 0;
   border: none;
@@ -36,6 +48,18 @@ button {
 button:hover {
   opacity: 0.8;
 }
+
+.button2 {
+  background-color: darkblue; 
+  color: white; 
+  border: 2px solid black;
+}
+
+.button2:hover {
+  background-color: black;
+  color: red;
+}
+
 
 /* Extra styles for the cancel button */
 .cancelbtn {
@@ -152,9 +176,9 @@ span.psw {
 
 <div class="center">
 
-  <button onclick="document.getElementById('id01').style.display='block'" style="widows: 300px;">Login</button>
+  <button class="button button2" onclick="document.getElementById('id01').style.display='block'" style="widows: 300px;">Login</button>
 
-  <a href="signup.php"> <button >Sign up</button> </a> 
+  <a href="signup.php"> <button class="button button2">Sign up</button> </a> 
 
 </div>
 
@@ -191,7 +215,6 @@ span.psw {
 
     <div class="container" style="background-color:#f1f1f1">
       <button type="button" onclick="document.getElementById('id01').style.display='none'" class="cancelbtn">Cancel</button>
-      <span class="psw">Forgot <a href="#">password?</a></span>
     </div>
   </form>
 </div>

@@ -11,18 +11,6 @@ $token = $_SESSION["token"];
 <html>
 <style>
 
-body::after {
-  content: "";
-  background: url(imgs/background.jpg);
-  opacity: 0.35;
-  top: 0;
-  left: 0;
-  bottom: 0;
-  right: 0;
-  position: absolute;
-  z-index: -1;   
-}
-
 .menu {
   padding: 10px;
   transition: transform .2s;
@@ -109,7 +97,6 @@ body::after {
    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lobster">
 
-  
  </head>
 <body>
    <div class="w3-container w3-lobster">
@@ -186,8 +173,6 @@ body::after {
       <div style="margin-right: :10px;">
       <?php echo "<a href='logout.php'>Log out</a>"; ?>
       </div>
-
-
 
    </div> 
 

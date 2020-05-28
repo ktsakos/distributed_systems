@@ -63,7 +63,6 @@ tr:nth-child(even) {
 
   <meta charset="utf-8"> 
 
-  
  </head>
 <body>
 
