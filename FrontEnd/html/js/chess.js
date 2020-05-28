@@ -24,7 +24,12 @@ var socket=io.connect('http://147.27.60.48:5001');
 var username=document.getElementById("username").innerHTML;
 var gametype="chess";
 socket.on('connect',function(){//connection trying event
-    socket.emit('connectionack',"{\"username\":\""+ username+"\",\"gametype\":\""+gametype+"\",\"clientid\":\""+socket.id+"\"}");
+    if(document.getElementById("playid")!=null){
+        socket.emit('connectionack',"{\"username\":\""+ username+"\",\"gametype\":\""+gametype+"\",\"clientid\":\""+socket.id+"\",\"playid\":\""+document.getElementById("playid").innerHTML+"\",\"tournid\":\""+document.getElementById("tournid").innerHTML+"\",\"round\":\""+document.getElementById("round").innerHTML+"\"}");
+    }
+    else{
+        socket.emit('connectionack',"{\"username\":\""+ username+"\",\"gametype\":\""+gametype+"\",\"clientid\":\""+socket.id+"\"}");
+    }
 });
 
 socket.on('connectionresponse',function(msg){//connection acceptance event

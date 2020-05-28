@@ -16,6 +16,14 @@ $token = $_SESSION['token'];
       <p id="username"><?php echo $username;?></p>
       <p>You are playing against:</p>
       <p id="opponent"></p>
+      <?php
+        if (isset($_GET['id'])){
+            echo "<p>Game For Tournament:".$_GET['tourname']."</p>";
+            echo "<p id=\"tournid\">".$_GET['tournid']."</p>";
+            echo "<p id=\"round\">".$_GET['round']."</p>";
+            echo "<p id=\"playid\">".$_GET['id']."</p>";
+        }
+      ?>
       <h1>Chess</h1>
         <table class="chess-board">
             <tbody>

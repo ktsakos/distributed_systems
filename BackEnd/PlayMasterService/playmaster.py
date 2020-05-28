@@ -53,18 +53,43 @@ def SendResultRemoveCouple(case,clientid1,clientid2):#clientid1 is the one who w
         result="tie"
     
     gametype=FindGametypeByClientId(clientid1)
-    url='http://172.16.1.6:5000/endpracticematch'
-    payload={'player1':home,'player2':away,'result':result,'gameType':gametype}
-    pdq=json.dumps(payload)#converts payload to double quotes
-    print(pdq,file=sys.stderr)
-    #convert string to json with json.loads
-    req=requests.post(url,json=json.loads(pdq))
-    print(req.text,file=sys.stderr)
-    resp=json.loads(req.text)
-    if(resp["response"]=="OK"):
-        #delete the match from mongo
-        myquery={"$or":[{"Client1":clientid1},{"Client2":clientid1}]}#just use a clientid to delete the match it participated
-        mycol.delete_one(myquery)
+    gameinfo=mycol.find_one({"$and":[{"Player1":home},{"playid":{"$exists":True}}]})
+    numofres=mycol.find({"$and":[{"Player1":home},{"playid":{"$exists":True}}]}).count()
+    if(numofres>0):#Send win for tournament match
+        url='http://172.16.1.6:5000/endtournmatch'
+        payload={'player1':home,'player2':away,'result':result,'playID':gameinfo["playid"],"tournamentID":gameinfo["tournid"],"round":gameinfo["round"]}
+        pdq=json.dumps(payload)#converts payload to double quotes
+        print(pdq,file=sys.stderr)
+        #convert string to json with json.loads
+        req=requests.post(url,json=json.loads(pdq))
+        print(req.text,file=sys.stderr)
+        resp=json.loads(req.text)
+        if(result!="tie" and resp["response"]!="No_available_players_yet" and resp["response"]!="champion"):#Send request to match the winner to the next 
+            url='http://172.16.1.6:5000/matchplayers'
+            if(result=="win"):
+                winner=home
+            elif (result=="loss"):
+                winner=away
+            #Send the winner with the playID of the next match and the away/home place which was sent after the end of match request
+            payload={'player':winner,'playID':resp["response"],"tournamentID":gameinfo["tournid"],"place":resp["response2"]}
+            pdq=json.dumps(payload)#converts payload to double quotes
+            print(pdq,file=sys.stderr)
+            #convert string to json with json.loads
+            req=requests.post(url,json=json.loads(pdq))
+            print(req.text,file=sys.stderr)
+    else:#For Practice match
+        url='http://172.16.1.6:5000/endpracticematch'
+        payload={'player1':home,'player2':away,'result':result,'gameType':gametype}
+        pdq=json.dumps(payload)#converts payload to double quotes
+        print(pdq,file=sys.stderr)
+        #convert string to json with json.loads
+        req=requests.post(url,json=json.loads(pdq))
+        print(req.text,file=sys.stderr)
+        resp=json.loads(req.text)
+        if(resp["response"]=="OK"):
+            #delete the match from mongo
+            myquery={"$or":[{"Client1":clientid1},{"Client2":clientid1}]}#just use a clientid to delete the match it participated
+            mycol.delete_one(myquery)
 
 def FindUsernameByClientId(clientid):
     myquery={"$or":[{"Client1":clientid},{"Client2":clientid}]}
@@ -88,20 +113,34 @@ def handle_my_custom_event(jsondata):
         print("A user tried to rejoin but already exists",file=sys.stderr)
         return
     emit('connectionresponse','Client was connected!',room=data["clientid"]) #send connection acceptance message
-    #check if a player already is waiting for a game of this type
-    numofwaitingusers=mycol.find({"$and":[{"Player2":{"$exists": False}},{"gametype":data["gametype"]}]}).count()
-    print ("numofwaitingusers:"+str(numofwaitingusers),file=sys.stderr)
-    if(numofwaitingusers>0):
-        myquery={"$and":[{"Player2":{"$exists": False}},{"gametype":data["gametype"]}]}
-        newvalues={"$set": {"Player2":data["username"],"Client2":data["clientid"]}}
-        mycol.update_one(myquery,newvalues)
-        result=mycol.find_one({"Player2":data["username"]})
-        emit('gamestart',result["Player2"],room=result["Client1"])#with gamestart event send also the opponent's username
-        emit('gamestart',result["Player1"],room=result["Client2"])
-        emit('makemove',room=result["Client1"])
-    else:#The player should wait and a new insertion must be done
-        mydict={"Player1":data["username"],"Client1":data["clientid"],"gametype":data["gametype"]}
-        mycol.insert_one(mydict)
+    if "playid" in data:#We have a tournament game
+        searchforopponent=mycol.find({"$and":[{"Player2":{"$exists": False}},{"gametype":data["gametype"]},{"playid":data["playid"]}]}).count()
+        if(searchforopponent>0):
+            myquery={"playid":data["playid"]}
+            newvalues={"$set": {"Player2":data["username"],"Client2":data["clientid"]}}
+            mycol.update_one(myquery,newvalues)
+            result=mycol.find_one({"Player2":data["username"]})
+            emit('gamestart',result["Player2"],room=result["Client1"])#with gamestart event send also the opponent's username
+            emit('gamestart',result["Player1"],room=result["Client2"])
+            emit('makemove',room=result["Client1"])
+        else:
+            mydict={"Player1":data["username"],"Client1":data["clientid"],"gametype":data["gametype"],"playid":data["playid"],"tournid":data["tournid"],"round":data["round"]}
+            mycol.insert_one(mydict)
+    else: #if json doesnt contain a play id we have a practise game ..just match the user with another user of the same gametype connection
+        #check if a player already is waiting for a game of this type
+        numofwaitingusers=mycol.find({"$and":[{"Player2":{"$exists": False}},{"gametype":data["gametype"]}]}).count()
+        print ("numofwaitingusers:"+str(numofwaitingusers),file=sys.stderr)
+        if(numofwaitingusers>0):
+            myquery={"$and":[{"Player2":{"$exists": False}},{"gametype":data["gametype"]}]}
+            newvalues={"$set": {"Player2":data["username"],"Client2":data["clientid"]}}
+            mycol.update_one(myquery,newvalues)
+            result=mycol.find_one({"Player2":data["username"]})
+            emit('gamestart',result["Player2"],room=result["Client1"])#with gamestart event send also the opponent's username
+            emit('gamestart',result["Player1"],room=result["Client2"])
+            emit('makemove',room=result["Client1"])
+        else:#The player should wait and a new insertion must be done
+            mydict={"Player1":data["username"],"Client1":data["clientid"],"gametype":data["gametype"]}
+            mycol.insert_one(mydict)
 
 
 @socketio.on('receivemove')

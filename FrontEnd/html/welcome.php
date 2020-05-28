@@ -153,7 +153,7 @@ $token = $_SESSION["token"];
 
    <div id="element4">   
       <div class="menu">
-         <?php echo '<span title="Assign Roles"> <a href="http://172.16.1.4:5000/assign?token='.$token.'""> <b style="color:black;"> </b> <img src="imgs/roles.png" alt="chess" width="100" height="100"> </a> </span>'; ?>
+         <?php echo '<span title="Assign Roles"> <a href="http://147.27.60.48:5000/assign?token='.$token.'""> <b style="color:black;"> </b> <img src="imgs/roles.png" alt="chess" width="100" height="100"> </a> </span>'; ?>
       </div> 
    </div> 
 
