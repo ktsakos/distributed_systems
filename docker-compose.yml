@@ -4,6 +4,7 @@ services:
         build: .
         ports: 
             - "8001:80"
+        restart: always
         volumes:
             - ./FrontEnd/html:/var/www/html/
         links:
