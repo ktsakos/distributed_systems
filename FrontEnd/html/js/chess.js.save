@@ -20,7 +20,7 @@ var BlackTowerSmallRoke=false;
 var EnPassant="";
 
 //websocket communication testing
-var socket=io.connect('http://172.16.1.2:5000');
+var socket=io.connect('http://172.16.1.2:5001');
 var username=document.getElementById("username").innerHTML;
 var gametype="chess";
 socket.on('connect',function(){//connection trying event

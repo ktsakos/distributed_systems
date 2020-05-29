@@ -1,5 +1,5 @@
 //websocket communication testing
-var socket=io.connect('http://147.27.60.48:5001');
+var socket=io.connect('http://172.16.1.2:5000');
 var username=document.getElementById("username").innerHTML;
 var gametype="tic-tac-toe";
 socket.on('connect',function(){//connection trying event
