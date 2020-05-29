@@ -1,0 +1,29 @@
+Download from github:
+*git clone https://github.com/ktsakos/distributed_systems.git
+*username:ktsakos
+*password:kostas581994
+
+Alternatively, download from google drive:
+
+https://drive.google.com/drive/folders/1-DQ22wm2EmniWlUtA8Lyf6xOphbH1WYy?usp=sharing
+
+
+
+HOW TO DEPLOY IT:
+-Into the repository run:
+*sudo docker-compose up -d 
+
+In case you don't deploy it locally:
+-Every client access 1)authentication service to assign roles and 2)playmaster for socket connection via the docker ip of the services
+- In case the project is not running locally ,change 
+the docker ips in the following lines with the floating ip of the VM the project is deployed in to access these services from outside
+
+1)Into the distributed_systems/FrontEnd/html/welcome.php file change the line 162
+
+2)Into the distributed_systems/BackEnd/authentication_service/templates/all_users.html file change the line 158
+
+3)Into the distributed_systems/FrontEnd/html/js/chess.js change the line 23
+
+4)Into the distributed_systems/FrontEnd/html/js/tictoe.js change the line 1
+
+
