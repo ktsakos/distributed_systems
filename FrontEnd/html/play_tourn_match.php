@@ -25,11 +25,11 @@ curl_close($curl);
 $myArray = json_decode($response, true);
 
 if($myArray[0][5]=="chess"){
-    $url="chess.php?id=".$_GET['id']."&tourname=".$myArray[0][6]."&tournid=".$myArray[0][0]."&round=".$myArray[0][4];
+    $url="chess.php?id=".$_GET['id']."&tourname=".$myArray[0][6]."&tournid=".$myArray[0][0]."&round=".$myArray[0][4]."&home=".$myArray[0][1]."&away=".$myArray[0][2];
     header('Location:'.$url);
 }
 else if($myArray[0][5]=="tictactoe"){
-    $url="tictactoe.php?id=".$_GET['id']."&tourname=".$myArray[0][6]."&tournid=".$myArray[0][0]."&round=".$myArray[0][4];
+    $url="tictactoe.php?id=".$_GET['id']."&tourname=".$myArray[0][6]."&tournid=".$myArray[0][0]."&round=".$myArray[0][4]."&home=".$myArray[0][1]."&away=".$myArray[0][2];
     header('Location:'.$url);
 }
 

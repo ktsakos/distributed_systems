@@ -47,7 +47,7 @@ if (isset($_POST["submit"])) {
 
   if ($resp = "OK")
   { 
-    echo "The tournament was created successfully!"; 
+    header('Location: tournament_created.php'); 
   }
   else {
     echo "Something went wrong."; 
@@ -167,6 +167,7 @@ input[type=submit]:hover {
               <div class="col-75">
                   <select id="maxNumOfUsers" name="maxNumOfUsers">
                     <option value="4">4</option>
+                    <option value="8">8</option>
                     <option value="16">16</option>
                     <option value="32">32</option>
                   </select>

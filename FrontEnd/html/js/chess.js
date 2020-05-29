@@ -25,7 +25,7 @@ var username=document.getElementById("username").innerHTML;
 var gametype="chess";
 socket.on('connect',function(){//connection trying event
     if(document.getElementById("playid")!=null){
-        socket.emit('connectionack',"{\"username\":\""+ username+"\",\"gametype\":\""+gametype+"\",\"clientid\":\""+socket.id+"\",\"playid\":\""+document.getElementById("playid").innerHTML+"\",\"tournid\":\""+document.getElementById("tournid").innerHTML+"\",\"round\":\""+document.getElementById("round").innerHTML+"\"}");
+        socket.emit('connectionack',"{\"username\":\""+ username+"\",\"gametype\":\""+gametype+"\",\"clientid\":\""+socket.id+"\",\"playid\":\""+document.getElementById("playid").innerHTML+"\",\"tournid\":\""+document.getElementById("tournid").innerHTML+"\",\"round\":\""+document.getElementById("round").innerHTML+"\",\"home\":\""+document.getElementById("home").innerHTML+"\",\"away\":\""+document.getElementById("away").innerHTML+"\"}");
     }
     else{
         socket.emit('connectionack',"{\"username\":\""+ username+"\",\"gametype\":\""+gametype+"\",\"clientid\":\""+socket.id+"\"}");

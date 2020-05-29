@@ -118,7 +118,6 @@ def createtournament():
 
 
 
-
 # view all tournaments (admin)
 @app.route('/viewtournaments', methods=['GET'])
 def viewtournaments():
@@ -237,7 +236,7 @@ def endtournmatch():
   playID = content["playID"] # ID of the specific play between the two players 
   tournamentID = content["tournamentID"] # ID of the specific tournament between the two players 
   tourn_round = content["round"] # tournament round (e.g. round of 16 active players is called "round 16")
- 
+  tourn_round = int(tourn_round)
   if player1 and player2 and result:
 
     if result == "win": # player2 lost
@@ -290,10 +289,10 @@ def endtournmatch():
         return jsonify( {"response": "champion", "response2": "nothing"} ) 
 
       # look for an opponent who already is in the next round
-      tourn_round = int(tourn_round)
+      
       next_round = int(tourn_round/2)  
-      sql2 = "SELECT * FROM tournament_plays WHERE tournamentID=%s AND round=%s AND home='' OR away='' AND result=''"
-      val2 = (tournamentID, next_round)
+      sql2 = "SELECT * FROM tournament_plays WHERE (tournamentID=%s AND round=%s AND home='' AND result='') OR (tournamentID=%s AND round=%s AND away='' AND result='')"
+      val2 = (tournamentID, next_round, tournamentID, next_round)
       mycursor.execute(sql2, val2) 
 
       next_opponent = mycursor.fetchone()
@@ -375,8 +374,8 @@ def endtournmatch():
       # look for an opponent who already is in the next round
       tourn_round = int(tourn_round)
       next_round = int(tourn_round/2)  
-      sql2 = "SELECT * FROM tournament_plays WHERE tournamentID=%s AND round=%s AND home='' OR away='' AND result=''"
-      val2 = (tournamentID, next_round)
+      sql2 = "SELECT * FROM tournament_plays WHERE (tournamentID=%s AND round=%s AND home='' AND result='') OR (tournamentID=%s AND round=%s AND away='' AND result='')"
+      val2 = (tournamentID, next_round, tournamentID, next_round)
       mycursor.execute(sql2, val2) 
 
       next_opponent = mycursor.fetchone()
@@ -774,7 +773,7 @@ def get_tournament_plays():
 
   # retrieve all finished tournament plays 
   mycursor = mydb.cursor()
-  sql = "SELECT DISTINCT a.tournamentID, home, away, result, round, gametype, name FROM (SELECT DISTINCT tournamentID, home, away, result, round FROM `tournament_plays` WHERE result <> '') a JOIN (SELECT tournamentID, gametype, name FROM `tournaments`) b ON a.tournamentID = b.tournamentID"  
+  sql = "SELECT DISTINCT a.tournamentID, home, away, result, round, gametype, name, a.playID FROM (SELECT DISTINCT tournamentID, home, away, result, round, playID FROM `tournament_plays` WHERE result <> '') a JOIN (SELECT tournamentID, gametype, name FROM `tournaments`) b ON a.tournamentID = b.tournamentID ORDER BY a.playID"  
   mycursor.execute(sql)
 
   # fetch all records, return results
@@ -810,7 +809,6 @@ def delete_tournament():
 
      
 
-
 # get all active players 
 @app.route('/get_all_players', methods=['GET'])
 def get_all_players():
@@ -830,7 +828,6 @@ def get_all_players():
 
     else: 
       return jsonify({"response": "no_active_players"}), 200  
-
 
 
 
@@ -863,6 +860,63 @@ def get_tourn_data():
       return jsonify({"response": "no_matches_found"}), 200
 
 
+
+
+
+# retrieve all tournament matches that a specific player has to play in the current round in all tournaments  
+@app.route('/get_joined_players', methods=['GET'])
+def get_joined_players():
+
+  if request.method == 'GET':
+
+    # get JSON request
+    content = request.get_json()
+    tournamentID = content["tournamentID"] 
+    player = content["player"] 
+
+    # check if player is active in these tournaments and find the matches that have no result yet, search in two tables using a JOIN query
+    mycursor = mydb.cursor()
+    sql = "SELECT * FROM `tournament_players` WHERE tournamentID = %s AND player = %s"
+    val = (tournamentID,player)
+    mycursor.execute(sql, val) 
+
+    # fetch record, return results
+    players = mycursor.fetchone()
+
+    if players:
+      return jsonify({"response": "yes"}), 200 
+
+    else: 
+      return jsonify({"response": "no"}), 200
+
+
+
+
+
+# retrieve all finals 
+@app.route('/get_all_finals', methods=['GET'])
+def get_all_finals():
+
+  if request.method == 'GET':
+
+    # get JSON request with gametype
+    content = request.get_json()
+    gametype = content["gametype"] 
+
+    # retrieve all tournament final plays 
+    mycursor = mydb.cursor()
+    sql = "SELECT DISTINCT b.home, b.away, a.tournamentID, a.gametype, b.round, b.result FROM (SELECT DISTINCT tournamentID, gametype FROM `tournaments` WHERE gametype = %s) a JOIN (SELECT DISTINCT tournamentID, home, away, round, playID, result FROM `tournament_plays` WHERE result <> '' AND result <> 'tie') b ON a.tournamentID = b.tournamentID AND round = 2"
+    val = (gametype,)
+    mycursor.execute(sql,val) 
+
+    # fetch record, return results
+    finals = mycursor.fetchall()
+
+    if finals:
+      return jsonify(finals), 200 
+
+    else: 
+      return jsonify({"response": "nofinals"}), 200
 
 
 

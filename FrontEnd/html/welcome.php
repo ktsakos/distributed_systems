@@ -139,6 +139,12 @@ $token = $_SESSION["token"];
       </div> 
    </div> 
 
+   <div id="element3">   
+      <div class="menu">
+         <?php echo '<span title="Tournament Champions"> <a href="list_of_winners.php"> <b style="color:black;"> </b> <img src="imgs/champions.png" alt="chess" width="110" height="110"> </a> </span>'; ?>
+      </div> 
+   </div> 
+
    <div id="element4">   
       <div class="menu">
          <?php echo '<span title="Total Ranking"> <a href="total_ranking.php"> <b style="color:black;"> </b> <img src="imgs/ranking.png" alt="chess" width="120" height="120"> </a> </span>'; ?>
@@ -153,7 +159,7 @@ $token = $_SESSION["token"];
 
    <div id="element4">   
       <div class="menu">
-         <?php echo '<span title="Assign Roles"> <a href="http://147.27.60.48:5000/assign?token='.$token.'""> <b style="color:black;"> </b> <img src="imgs/roles.png" alt="chess" width="100" height="100"> </a> </span>'; ?>
+         <?php echo '<span title="Assign Roles"> <a href="http://172.16.1.4:5000/assign?token='.$token.'""> <b style="color:black;"> </b> <img src="imgs/roles.png" alt="chess" width="100" height="100"> </a> </span>'; ?>
       </div> 
    </div> 
 

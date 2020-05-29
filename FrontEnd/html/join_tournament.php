@@ -35,13 +35,8 @@ $safekey = $json['safekey'];
 
 if ($resp == "OK")
 {
-   echo "You have successfully joined this tournament! \n";
-   echo "Your safe key is: ";
-   echo $safekey;
+  header('Location: joined.php?safekey='.$safekey.''); 
 }
-
-
-
 
 ?>
 

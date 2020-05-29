@@ -43,9 +43,11 @@ tr:nth-child(even) {
     <?php echo "<span title='Home Page'><a href='welcome.php'> <b style='color:black;'> </b> <img src='imgs/home.png' alt='trophy' width='45' height='45'> </a> </span> "; ?>
   </div>
 
-   <p>Choose a tournament:</p>
+   <h2> <b> Choose a tournament to join! </b> </h2>
 
   <?php  
+
+  //get all available tournaments where a user can join 
 
   $curl = curl_init();
 
@@ -62,7 +64,6 @@ tr:nth-child(even) {
       "Content-Type: application/json"
     ),
   ));
-
 
   $response = curl_exec($curl);
 
@@ -87,7 +88,40 @@ tr:nth-child(even) {
 
   for ($x = 0; $x <= $size-1; $x++) {
 
-  	$id = $myArray[$x][5]; 
+    $id = $myArray[$x][5]; // tournamentID 
+
+    $action = '<a href="join_tournament.php?id='.$id.'">Join Tournament</a>';
+
+    // check if this user has alreasy joined any of the retrieved tournaments 
+
+    $curl1 = curl_init();
+
+    curl_setopt_array($curl1, array(
+      CURLOPT_URL => "http://172.16.1.6:5000/get_joined_players",
+      CURLOPT_RETURNTRANSFER => true,
+      CURLOPT_ENCODING => "",
+      CURLOPT_MAXREDIRS => 10,
+      CURLOPT_TIMEOUT => 0,
+      CURLOPT_FOLLOWLOCATION => true,
+      CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+      CURLOPT_CUSTOMREQUEST => "GET",
+      CURLOPT_POSTFIELDS =>'{ "tournamentID": "'.$id.'", "player": "'.$username.'" }',
+      CURLOPT_HTTPHEADER => array(
+        "Content-Type: application/json"
+      ),
+    ));
+
+    $resp1 = curl_exec($curl1);
+
+    curl_close($curl1);
+
+    $json = json_decode($resp1, TRUE); 
+    $response1 = $json['response'];
+
+    if ($response1 == "yes")
+    {
+      $action = "Already joined";
+    } 
 
     echo 
     " <tr>
@@ -96,15 +130,14 @@ tr:nth-child(even) {
         <td>".$myArray[$x][2]."</td>
         <td>".$myArray[$x][1]."</td>
         <td>".$myArray[$x][4]."</td>
-        <td><a href='join_tournament.php?id=$id'>Join tournament</a></td>
+        <td>".$action."</td>
       </tr>
     ";
-
+   
   }
 
   echo "</table>";
 
-      
   ?>
  
 

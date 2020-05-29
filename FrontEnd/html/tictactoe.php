@@ -23,6 +23,8 @@ $token = $_SESSION['token'];
           echo "<p id=\"tournid\">".$_GET['tournid']."</p>";
           echo "<p id=\"round\">".$_GET['round']."</p>";
           echo "<p id=\"playid\">".$_GET['id']."</p>";
+          echo "<p style=\"display:none;\" id=\"home\">".$_GET['home']."</p>";
+          echo "<p style=\"display:none;\" id=\"away\">".$_GET['away']."</p>";
         }
       ?>
   <h1>Tic Tac Toe</h1>

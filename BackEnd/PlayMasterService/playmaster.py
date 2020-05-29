@@ -33,31 +33,26 @@ def UserAlreadyHasJoined(username):
     else:
         return False
 
-def SendResultRemoveCouple(case,clientid1,clientid2):#clientid1 is the one who wins #result is refered to the home player
-    player1=FindUsernameByClientId(clientid1).split(",")
-    player2=FindUsernameByClientId(clientid2).split(",")
-    #Find the home and away player(Home is the one who joined first the game),the result is refered to home player
-    if(player1[1]=="home"):
-        home=player1[0]
-        away=player2[0]
-        result="win"
-    elif(player2[1]=="home"):
-        home=player2[0]
-        away=player1[0]
-        result="loss"
-    else:#The client ids didnt match in the db
-        print("Didn't find two clients to send result",file=sys.stderr)
-        return
-    
+def SendResultRemoveCouple(case,clientid1,clientid2):#clientid1 is the one who wins #result is refered to him
+    winner=FindUsernameByClientId(clientid1)
+    looser=FindUsernameByClientId(clientid2)
     if(case=="tie"):
         result="tie"
+    else:
+        result="win"
     
     gametype=FindGametypeByClientId(clientid1)
-    gameinfo=mycol.find_one({"$and":[{"Player1":home},{"playid":{"$exists":True}}]})
-    numofres=mycol.find({"$and":[{"Player1":home},{"playid":{"$exists":True}}]}).count()
+    gameinfo=mycol.find_one({"$and":[{"$or":[{"Client1":clientid1},{"Client2":clientid1}]},{"playid":{"$exists":True}}]})
+    numofres=mycol.find({"$and":[{"$or":[{"Client1":clientid1},{"Client2":clientid1}]},{"playid":{"$exists":True}}]}).count()
+    #For the practise match the result is refered to the username who joined the game first
+    #For the tournament match the result is refered to the username who Gamemaster has inserted as home player
     if(numofres>0):#Send win for tournament match
         url='http://172.16.1.6:5000/endtournmatch'
-        payload={'player1':home,'player2':away,'result':result,'playID':gameinfo["playid"],"tournamentID":gameinfo["tournid"],"round":gameinfo["round"]}
+        if(gameinfo["home"]==winner and case!="tie"):
+            result="win"
+        elif(gameinfo["home"]==looser and case !="tie"):
+            result="loss"
+        payload={'player1':gameinfo["home"],'player2':gameinfo["away"],'result':result,'playID':gameinfo["playid"],"tournamentID":gameinfo["tournid"],"round":gameinfo["round"]}
         pdq=json.dumps(payload)#converts payload to double quotes
         print(pdq,file=sys.stderr)
         #convert string to json with json.loads
@@ -66,10 +61,6 @@ def SendResultRemoveCouple(case,clientid1,clientid2):#clientid1 is the one who w
         resp=json.loads(req.text)
         if(result!="tie" and resp["response"]!="No_available_players_yet" and resp["response"]!="champion"):#Send request to match the winner to the next 
             url='http://172.16.1.6:5000/matchplayers'
-            if(result=="win"):
-                winner=home
-            elif (result=="loss"):
-                winner=away
             #Send the winner with the playID of the next match and the away/home place which was sent after the end of match request
             payload={'player':winner,'playID':resp["response"],"tournamentID":gameinfo["tournid"],"place":resp["response2"]}
             pdq=json.dumps(payload)#converts payload to double quotes
@@ -79,7 +70,7 @@ def SendResultRemoveCouple(case,clientid1,clientid2):#clientid1 is the one who w
             print(req.text,file=sys.stderr)
     else:#For Practice match
         url='http://172.16.1.6:5000/endpracticematch'
-        payload={'player1':home,'player2':away,'result':result,'gameType':gametype}
+        payload={'player1':winner,'player2':looser,'result':result,'gameType':gametype}
         pdq=json.dumps(payload)#converts payload to double quotes
         print(pdq,file=sys.stderr)
         #convert string to json with json.loads
@@ -95,9 +86,9 @@ def FindUsernameByClientId(clientid):
     myquery={"$or":[{"Client1":clientid},{"Client2":clientid}]}
     result=mycol.find_one(myquery)
     if(result["Client1"]==clientid):
-        return result["Player1"]+",home"
+        return result["Player1"]
     elif (result["Client2"]==clientid):
-        return result["Player2"]+",away"
+        return result["Player2"]
 
 def FindGametypeByClientId(clientid):
     myquery={"$or":[{"Client1":clientid},{"Client2":clientid}]}
@@ -124,7 +115,7 @@ def handle_my_custom_event(jsondata):
             emit('gamestart',result["Player1"],room=result["Client2"])
             emit('makemove',room=result["Client1"])
         else:
-            mydict={"Player1":data["username"],"Client1":data["clientid"],"gametype":data["gametype"],"playid":data["playid"],"tournid":data["tournid"],"round":data["round"]}
+            mydict={"Player1":data["username"],"Client1":data["clientid"],"gametype":data["gametype"],"playid":data["playid"],"tournid":data["tournid"],"round":data["round"],"home":data["home"],"away":data["away"]}
             mycol.insert_one(mydict)
     else: #if json doesnt contain a play id we have a practise game ..just match the user with another user of the same gametype connection
         #check if a player already is waiting for a game of this type
