@@ -80,13 +80,12 @@ def getscore():
 
 
 
-# get user score (so far) from Scores table 
+# just for testing 
 @app.route('/', methods=['GET'])
 def index():
 
-  return "PARTETA"
-  #print('parta',file=sys.stdrr)
-  #print('parta',file=sys.stdout)
+  return "OK"
+  #print('ok',file=sys.stdrr)
 
 
 
@@ -144,7 +143,7 @@ def viewtournaments():
 
 
 
-# view all tournaments (admin)
+# view all available (to join) tournaments 
 @app.route('/get_available_tournaments', methods=['GET'])
 def get_available_tournaments():
 
@@ -224,7 +223,7 @@ def entertournament():
 
 
 
-# update DB data when a match is complete (win/lose or tie)
+# update DB data when a tournament match is complete (win/lose or tie)
 @app.route('/endtournmatch', methods=['POST'])
 def endtournmatch():
   
@@ -498,7 +497,7 @@ def matchplayers():
 
 
 
-# update DB data when a match is complete (win/lose or tie)
+# give the command for a tournament to begin 
 @app.route('/begintournament', methods=['POST'])
 def begintournament():
 
@@ -613,7 +612,7 @@ def next_tourn_matches():
 
 
 
-# update DB data when a match is complete (with a win/loss/tie)
+# update DB data when a practice match is complete (with a win/loss/tie)
 @app.route('/endpracticematch', methods=['POST'])
 def endpracticematch():
   
@@ -740,7 +739,7 @@ def endpracticematch():
 
 
 
-# retrieve all practice plays of a specific player 
+# retrieve all complete practice plays of a specific player 
 @app.route('/getpracticeplays', methods=['GET'])
 def getpracticeplays():
 
@@ -809,7 +808,7 @@ def delete_tournament():
 
      
 
-# get all active players 
+# get all active players in the platform 
 @app.route('/get_all_players', methods=['GET'])
 def get_all_players():
   
@@ -834,7 +833,7 @@ def get_all_players():
 
 
 
-# retrieve all tournament matches that a specific player has to play in the current round in all tournaments  
+# retrieve all important available data about a specific tournament using playID 
 @app.route('/get_tourn_data', methods=['GET'])
 def get_tourn_data():
 
@@ -863,7 +862,7 @@ def get_tourn_data():
 
 
 
-# retrieve all tournament matches that a specific player has to play in the current round in all tournaments  
+# retrieve all players that have joined a specific tournament 
 @app.route('/get_joined_players', methods=['GET'])
 def get_joined_players():
 
@@ -874,7 +873,6 @@ def get_joined_players():
     tournamentID = content["tournamentID"] 
     player = content["player"] 
 
-    # check if player is active in these tournaments and find the matches that have no result yet, search in two tables using a JOIN query
     mycursor = mydb.cursor()
     sql = "SELECT * FROM `tournament_players` WHERE tournamentID = %s AND player = %s"
     val = (tournamentID,player)
