@@ -11,7 +11,6 @@ from random import randrange
 app = Flask(__name__) # create an app instance
 logging.basicConfig(level=logging.DEBUG)   
 
-
  
 #gamemaster db connection
 mydb = mysql.connector.connect(
@@ -22,11 +21,27 @@ mydb = mysql.connector.connect(
   database="gamemaster_db"
 )
 
+def connect_to_db():
+  #gamemaster db connection
+  mydb = mysql.connector.connect(
+    host="db2", 
+    port="3306",
+    user="root",
+    passwd="password",
+    database="gamemaster_db"
+  )
+
+  return mydb
+
+
+
 ### API routes 
 
 # initialize score for user 
 @app.route('/initial_score', methods=['POST', 'GET'])
 def register():
+
+  mydb = connect_to_db() #connect to Gamemaster DB
   
   # get JSON request with username 
   content = request.get_json()
@@ -49,6 +64,8 @@ def register():
 # get user's total score (so far) from Scores table 
 @app.route('/getscore', methods=['GET'])
 def getscore():
+
+  mydb = connect_to_db() #connect to Gamemaster DB
   
   if request.method == 'GET':
 
@@ -92,6 +109,8 @@ def index():
 # create a tournament (official/admin)
 @app.route('/createtournament', methods=['POST'])
 def createtournament():
+
+  mydb = connect_to_db() #connect to Gamemaster DB
   
   # get JSON request with tournament's data  
   content = request.get_json()
@@ -121,6 +140,8 @@ def createtournament():
 @app.route('/viewtournaments', methods=['GET'])
 def viewtournaments():
 
+  mydb = connect_to_db() #connect to Gamemaster DB
+
   if request.method == 'GET':
 
     # retrieve all tournaments  
@@ -146,6 +167,8 @@ def viewtournaments():
 # view all available (to join) tournaments 
 @app.route('/get_available_tournaments', methods=['GET'])
 def get_available_tournaments():
+
+  mydb = connect_to_db() #connect to Gamemaster DB
 
   if request.method == 'GET':
 
@@ -173,6 +196,8 @@ def get_available_tournaments():
 # enter a tournament (for a user)
 @app.route('/entertournament', methods=['POST'])
 def entertournament():
+
+  mydb = connect_to_db() #connect to Gamemaster DB
   
   # get JSON request with tournament's data  
   content = request.get_json()
@@ -226,6 +251,8 @@ def entertournament():
 # update DB data when a tournament match is complete (win/lose or tie)
 @app.route('/endtournmatch', methods=['POST'])
 def endtournmatch():
+
+  mydb = connect_to_db() #connect to Gamemaster DB
   
   # get JSON request with tournament's data  
   content = request.get_json()
@@ -466,6 +493,8 @@ def endtournmatch():
 # update DB, match two players in tournaments_plays table
 @app.route('/matchplayers', methods=['POST'])
 def matchplayers():
+
+  mydb = connect_to_db() #connect to Gamemaster DB
   
   # get JSON request with tournament's data  
   content = request.get_json()
@@ -500,6 +529,8 @@ def matchplayers():
 # give the command for a tournament to begin 
 @app.route('/begintournament', methods=['POST'])
 def begintournament():
+
+  mydb = connect_to_db() #connect to Gamemaster DB
 
   # get JSON request with tournament creator's command to begin tournament
   content = request.get_json()
@@ -585,6 +616,8 @@ def begintournament():
 @app.route('/next_tourn_matches', methods=['GET'])
 def next_tourn_matches():
 
+  mydb = connect_to_db() #connect to Gamemaster DB
+
   if request.method == 'GET':
 
     # get JSON request with player's username 
@@ -615,6 +648,8 @@ def next_tourn_matches():
 # update DB data when a practice match is complete (with a win/loss/tie)
 @app.route('/endpracticematch', methods=['POST'])
 def endpracticematch():
+
+  mydb = connect_to_db() #connect to Gamemaster DB
   
   # get JSON request with tournament's data  
   content = request.get_json()
@@ -743,6 +778,8 @@ def endpracticematch():
 @app.route('/getpracticeplays', methods=['GET'])
 def getpracticeplays():
 
+  mydb = connect_to_db() #connect to Gamemaster DB
+
   # get JSON request with tournament's data  
   content = request.get_json()
   player = content["username"] 
@@ -770,6 +807,8 @@ def getpracticeplays():
 @app.route('/get_tournament_plays', methods=['GET'])
 def get_tournament_plays():
 
+  mydb = connect_to_db() #connect to Gamemaster DB
+
   # retrieve all finished tournament plays 
   mycursor = mydb.cursor(buffered=True)
   sql = "SELECT DISTINCT a.tournamentID, home, away, result, round, gametype, name, a.playID FROM (SELECT DISTINCT tournamentID, home, away, result, round, playID FROM `tournament_plays` WHERE result <> '') a JOIN (SELECT tournamentID, gametype, name FROM `tournaments`) b ON a.tournamentID = b.tournamentID ORDER BY a.playID"  
@@ -791,6 +830,8 @@ def get_tournament_plays():
 @app.route('/delete_tournament', methods=['POST'])
 def delete_tournament():
 
+  mydb = connect_to_db() #connect to Gamemaster DB
+
   # get JSON request with tournament's ID   
   content = request.get_json()
   tournamentID = content["tournamentID"] 
@@ -811,6 +852,8 @@ def delete_tournament():
 # get all active players in the platform 
 @app.route('/get_all_players', methods=['GET'])
 def get_all_players():
+
+  mydb = connect_to_db() #connect to Gamemaster DB
   
   if request.method == 'GET':
 
@@ -836,6 +879,8 @@ def get_all_players():
 # retrieve all important available data about a specific tournament using playID 
 @app.route('/get_tourn_data', methods=['GET'])
 def get_tourn_data():
+
+  mydb = connect_to_db() #connect to Gamemaster DB
 
   if request.method == 'GET':
 
@@ -866,6 +911,8 @@ def get_tourn_data():
 @app.route('/get_joined_players', methods=['GET'])
 def get_joined_players():
 
+  mydb = connect_to_db() #connect to Gamemaster DB
+
   if request.method == 'GET':
 
     # get JSON request
@@ -894,6 +941,8 @@ def get_joined_players():
 # retrieve all finals 
 @app.route('/get_all_finals', methods=['GET'])
 def get_all_finals():
+
+  mydb = connect_to_db() #connect to Gamemaster DB
 
   if request.method == 'GET':
 

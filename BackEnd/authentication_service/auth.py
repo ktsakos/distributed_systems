@@ -18,12 +18,12 @@ app.secret_key = 'thisismysecretdonottouchit'
 
 
 mydb = mysql.connector.connect(
-      host="db", 
-      port="3306",
-      user="root",
-      passwd="password",
-      database="mydatabase"
-    )
+    host="db", 
+    port="3306",
+    user="root",
+    passwd="password",
+    database="mydatabase"
+)
 
 
 def connect_to_db():
@@ -43,6 +43,8 @@ def connect_to_db():
 def token_required(f):
     @wraps(f)
     def decorated(*args, **kwargs):
+
+        mydb = connect_to_db() #connect to Authentication DB
 
         content = request.get_json()
 
@@ -117,6 +119,8 @@ def index():
 @token_required
 def checktoken():
 
+    mydb = connect_to_db() #connect to Authentication DB
+
     content = request.get_json()
     token = content["token"]
     print(token)
@@ -176,6 +180,8 @@ def register():
 @app.route('/login_auth', methods=['GET'])
 def login_auth():
 
+    mydb = connect_to_db() #connect to Authentication DB
+
     json = request.get_json()
 
     input_username = json["username"]    
@@ -217,6 +223,8 @@ def login_auth():
 @app.route('/assign', methods=['GET'])
 @token_required
 def assign():
+
+    mydb = connect_to_db() #connect to Authentication DB
 
     token = request.args.get('token') 
 
@@ -260,6 +268,8 @@ def assign():
 @token_required
 def update():
 
+    mydb = connect_to_db() #connect to Authentication DB
+
     if request.method == 'POST':
 
         if 'token' in session:
@@ -297,20 +307,22 @@ def update():
 @app.route('/logout', methods=['POST'])
 def logout():
 
-	if request.method == 'POST': 
+    mydb = connect_to_db() #connect to Authentication DB
 
-		content = request.get_json()
-		username = content["username"]
+    if request.method == 'POST': 
 
-		#update token in DB with some trash string 
-		trash = 'sometrashstring'
-		try: 
-		    mycursor = mydb.cursor(buffered=True)
-		    mycursor.execute('UPDATE users SET token=%s WHERE username=%s', (trash, username))
-		    mydb.commit()
-		    return jsonify({"response": "logged_out"}), 200 
-		except:   
-		    return jsonify({"response": "error"})
+        content = request.get_json()
+        username = content["username"]
+
+        #update token in DB with some trash string 
+        trash = 'sometrashstring'
+        try: 
+            mycursor = mydb.cursor(buffered=True)
+            mycursor.execute('UPDATE users SET token=%s WHERE username=%s', (trash, username))
+            mydb.commit()
+            return jsonify({"response": "logged_out"}), 200 
+        except:   
+            return jsonify({"response": "error"})
 
 
 
