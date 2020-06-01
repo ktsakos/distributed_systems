@@ -41,7 +41,7 @@ def token_required(f):
                 token = session['token']
 
         # check database for token 
-        mycursor = mydb.cursor()
+        mycursor = mydb.cursor(buffered=True)
         sql = "SELECT * FROM users WHERE token=%s"
         val = (token,)
         mycursor.execute(sql, val)
@@ -109,7 +109,7 @@ def checktoken():
     print(token)
 
     # check database for token 
-    mycursor = mydb.cursor()
+    mycursor = mydb.cursor(buffered=True)
     sql = "SELECT * FROM users WHERE token=%s"
     val = (token,)
     mycursor.execute(sql, val)
@@ -120,7 +120,7 @@ def checktoken():
     #update timestamp in DB
     timestamp = datetime.datetime.utcnow() 
     id = user_account[5]
-    mycursor = mydb.cursor()
+    mycursor = mydb.cursor(buffered=True)
     mycursor.execute('UPDATE users SET timestamp=%s WHERE id=%s', (timestamp,id))
     mydb.commit() 
 
@@ -142,7 +142,7 @@ def register():
         task_content3 = content['content3']   
         task_content4 = content['content4'] 
 
-        mycursor = mydb.cursor()
+        mycursor = mydb.cursor(buffered=True)
         sql = "INSERT INTO users (username, password, name, surname, email, date_created, role, timestamp, token) VALUES (%s, %s, %s, %s, %s, now(), %s, %s, %s)"
         val = (task_content0, task_content1, task_content2, task_content3, task_content4, "Player", "", "trash")
         try:
@@ -166,7 +166,7 @@ def login_auth():
     input_password = json["password"]   
 
     # check database for username, password
-    mycursor = mydb.cursor()
+    mycursor = mydb.cursor(buffered=True)
     mycursor.execute('SELECT * FROM users WHERE username = %s AND password = %s', (input_username, input_password))
 
     # fetch one record, return result
@@ -176,7 +176,7 @@ def login_auth():
         timestamp = datetime.datetime.utcnow() 
         token = jwt.encode({'user' : user_account[0], 'exp' : timestamp}, app.secret_key)
         id = user_account[5]
-        mycursor = mydb.cursor()
+        mycursor = mydb.cursor(buffered=True)
         mycursor.execute('UPDATE users SET timestamp=now(), token=%s WHERE id=%s', (token,id))
         mydb.commit() 
         
@@ -211,7 +211,7 @@ def assign():
     session['token'] = token
 
     # check database for token 
-    mycursor = mydb.cursor()
+    mycursor = mydb.cursor(buffered=True)
     sql = "SELECT * FROM users WHERE token=%s"
     val = (token,)
     mycursor.execute(sql, val)
@@ -222,14 +222,14 @@ def assign():
     #update token timer 
     timestamp = datetime.datetime.utcnow() 
     id = user_account[5]
-    mycursor = mydb.cursor()
+    mycursor = mydb.cursor(buffered=True)
     mycursor.execute('UPDATE users SET timestamp=%s WHERE id=%s', (timestamp,id))
     mydb.commit() 
     role = user_account[7]
 
     # check if the user is Admin, else deny entrance 
     if role=='Admin':
-        mycursor = mydb.cursor()
+        mycursor = mydb.cursor(buffered=True)
         mycursor.execute('SELECT * FROM users')
         users = mycursor.fetchall()
         return render_template('all_users.html', users = users)
@@ -250,7 +250,7 @@ def update():
             token = session['token']
         
         # check database for token 
-        mycursor = mydb.cursor()
+        mycursor = mydb.cursor(buffered=True)
         sql = "SELECT * FROM users WHERE token=%s"
         val = (token,)
         mycursor.execute(sql, val)
@@ -261,13 +261,13 @@ def update():
         #update token timer 
         timestamp = datetime.datetime.utcnow() 
         id = user_account[5]
-        mycursor = mydb.cursor()
+        mycursor = mydb.cursor(buffered=True)
         mycursor.execute('UPDATE users SET timestamp=%s WHERE id=%s', (timestamp,id))
         mydb.commit() 
 
         id = request.form['id']
         role = request.form['role']
-        mycursor = mydb.cursor()
+        mycursor = mydb.cursor(buffered=True)
         mycursor.execute('UPDATE users SET role=%s WHERE id=%s', (role, id))
         flash("User Role Updated Successfully!")
         mydb.commit()
@@ -289,7 +289,7 @@ def logout():
 		#update token in DB with some trash string 
 		trash = 'sometrashstring'
 		try: 
-		    mycursor = mydb.cursor()
+		    mycursor = mydb.cursor(buffered=True)
 		    mycursor.execute('UPDATE users SET token=%s WHERE username=%s', (trash, username))
 		    mydb.commit()
 		    return jsonify({"response": "logged_out"}), 200 
