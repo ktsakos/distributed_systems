@@ -16,17 +16,30 @@ app.secret_key = 'thisismysecretdonottouchit'
 #app.secret_key = ''.join(random.choice(string.ascii_uppercase + string.digits)
 #    for x in range(32)) #a random string of 32 characters 
 
-#authentication db connection
-mydb = mysql.connector.connect(
-  host="db", 
-  port="3306",
-  user="root",
-  passwd="password",
-  database="mydatabase"
-)
 
+mydb = mysql.connector.connect(
+      host="db", 
+      port="3306",
+      user="root",
+      passwd="password",
+      database="mydatabase"
+    )
+
+
+def connect_to_db():
+    #authentication db connection
+    mydb = mysql.connector.connect(
+      host="db", 
+      port="3306",
+      user="root",
+      passwd="password",
+      database="mydatabase"
+    )
+
+    return mydb
 
  
+
 def token_required(f):
     @wraps(f)
     def decorated(*args, **kwargs):
@@ -133,21 +146,24 @@ def checktoken():
 @app.route('/register', methods=['POST'])
 def register():
 
-    if request.method == 'POST': 
-       
+    if request.method == 'POST':
+
+        mydb = connect_to_db() #connect to Authentication DB
+
         content = request.get_json()
         task_content0 = content['content']  
         task_content1 = content['content1']   
         task_content2 = content['content2']   
         task_content3 = content['content3']   
         task_content4 = content['content4'] 
-
+ 
         mycursor = mydb.cursor(buffered=True)
         sql = "INSERT INTO users (username, password, name, surname, email, date_created, role, timestamp, token) VALUES (%s, %s, %s, %s, %s, now(), %s, %s, %s)"
         val = (task_content0, task_content1, task_content2, task_content3, task_content4, "Player", "", "trash")
         try:
             mycursor.execute(sql, val)
             mydb.commit()
+            mycursor.close()
         except:  ## if username is taken
             payload = { "username": task_content0, "response": "UsernameTaken" }
             return jsonify(payload)
