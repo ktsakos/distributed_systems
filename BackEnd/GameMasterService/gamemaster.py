@@ -33,7 +33,7 @@ def register():
   value = content["username"] 
   
   # insert score = 0 for this user in the Scores table  
-  mycursor = mydb.cursor()
+  mycursor = mydb.cursor(buffered=True)
   sql = "INSERT INTO practice_scores (username, wins, ties, losses, plays, total_score, available) VALUES (%s, %s, %s, %s, %s, %s, %s)"
   val = (value, 0, 0, 0, 0, 0, 0)
   try: 
@@ -57,7 +57,7 @@ def getscore():
     username = content["username"] 
 
     # get score from DB
-    mycursor = mydb.cursor()
+    mycursor = mydb.cursor(buffered=True)
     sql = "SELECT SUM(s.total_score) AS totalscore FROM (SELECT total_score FROM practice_scores WHERE username = %s UNION ALL SELECT SUM(total_score) FROM tournament_players WHERE player = %s) s"
     val = (username, username)
     mycursor.execute(sql, val)
@@ -102,7 +102,7 @@ def createtournament():
   tournamName = content["tournamName"] 
   
   # insert this tournament in the tournaments table  
-  mycursor = mydb.cursor()
+  mycursor = mydb.cursor(buffered=True)
   sql = "INSERT INTO tournaments (gametype, maxnumofusers, joinedusers, password, creator, name, started) VALUES (%s, %s, %s, %s, %s, %s, %s)"
   val = (gameType, maxNumOfUsers, 0, password, creator, tournamName, 0) 
   try: 
@@ -113,7 +113,7 @@ def createtournament():
   except: 
     return jsonify( {"response": "error"} ) 
 
-
+ 
 
 
 
@@ -124,7 +124,7 @@ def viewtournaments():
   if request.method == 'GET':
 
     # retrieve all tournaments  
-    mycursor = mydb.cursor()
+    mycursor = mydb.cursor(buffered=True)
     sql = "SELECT * FROM tournaments"  
     mycursor.execute(sql)
 
@@ -150,7 +150,7 @@ def get_available_tournaments():
   if request.method == 'GET':
 
     # retrieve all tournaments  
-    mycursor = mydb.cursor()
+    mycursor = mydb.cursor(buffered=True)
     sql = "SELECT * FROM `tournaments` WHERE joinedusers < maxnumofusers and started = 0"  
     mycursor.execute(sql)
 
@@ -241,7 +241,7 @@ def endtournmatch():
     if result == "win": # player2 lost
 
       #set his active flag to 0 (excluded from the tournament)
-      mycursor = mydb.cursor()
+      mycursor = mydb.cursor(buffered=True)
       sql = "UPDATE tournament_players SET active = %s WHERE player = %s and tournamentID = %s" 
       val = (0, player2, tournamentID)
 
@@ -252,7 +252,7 @@ def endtournmatch():
         return jsonify( {"response": "error1"} ) 
 
       # update the row in tournaments_plays table (home player win)      
-      mycursor = mydb.cursor()
+      mycursor = mydb.cursor(buffered=True)
       sql1 = "UPDATE tournament_plays SET result = %s WHERE playID = %s"
       val1 = ('home', playID)
 
@@ -264,7 +264,7 @@ def endtournmatch():
 
       if(tourn_round == 8): # so next is the round of 4 (semifinals)
         # update tournament score (we do that only when player makes it to the round of 4) 
-        mycursor = mydb.cursor()
+        mycursor = mydb.cursor(buffered=True)
         sql = "UPDATE tournament_players SET total_score = 2 WHERE player = %s and tournamentID = %s" 
         val = (player1, tournamentID)  
         mycursor.execute(sql, val)
@@ -272,7 +272,7 @@ def endtournmatch():
 
       if(tourn_round == 4): # semifinal, so next is the round of 2 (final) 
         # update tournament score (the player will get 3 points for winning the play)
-        mycursor = mydb.cursor()
+        mycursor = mydb.cursor(buffered=True)
         sql = "UPDATE tournament_players SET total_score = total_score + 3 WHERE player = %s and tournamentID = %s" 
         val = (player1, tournamentID)  
         mycursor.execute(sql, val)
@@ -280,7 +280,7 @@ def endtournmatch():
 
       if(tourn_round == 2): # final
         # update tourn. score (the player will get 3 points for winning the match and 20 points for winning the tournament, so 23 in total)
-        mycursor = mydb.cursor()
+        mycursor = mydb.cursor(buffered=True)
         sql = "UPDATE tournament_players SET total_score = total_score + 23 WHERE player = %s and tournamentID = %s" 
         val = (player1, tournamentID) 
         mycursor.execute(sql, val)
@@ -324,7 +324,7 @@ def endtournmatch():
     elif result == "loss": # player1 lost
 
       # set his active flag to 0 (excluded from the tournament) 
-      mycursor = mydb.cursor() 
+      mycursor = mydb.cursor(buffered=True) 
       sql = "UPDATE tournament_players SET active = %s WHERE player = %s and tournamentID = %s"
       val = (0, player1, tournamentID)
 
@@ -335,7 +335,7 @@ def endtournmatch():
         return jsonify( {"response": "error3"} ) 
 
       # update result column in tournaments_plays table, away player wins    
-      mycursor = mydb.cursor()
+      mycursor = mydb.cursor(buffered=True)
       sql1 = "UPDATE tournament_plays SET result = %s WHERE playID = %s"
       val1 = ('away', playID)
 
@@ -347,7 +347,7 @@ def endtournmatch():
 
       if(tourn_round == 8): # so next is the round of 4 (semifinals)
         # update tournament score (we do that only when player makes it to the round of 4) 
-        mycursor = mydb.cursor()
+        mycursor = mydb.cursor(buffered=True)
         sql = "UPDATE tournament_players SET total_score = 2 WHERE player = %s and tournamentID = %s" 
         val = (player2, tournamentID)  
         mycursor.execute(sql, val)
@@ -355,7 +355,7 @@ def endtournmatch():
 
       if(tourn_round == 4): # so next is the round of 2 (final) 
         # update tournament score (the player will get 3 points for winning the play)
-        mycursor = mydb.cursor()
+        mycursor = mydb.cursor(buffered=True)
         sql = "UPDATE tournament_players SET total_score = total_score + 3 WHERE player = %s and tournamentID = %s" 
         val = (player2, tournamentID)  
         mycursor.execute(sql, val)
@@ -363,7 +363,7 @@ def endtournmatch():
 
       if(tourn_round == 2):
         # update tourn. score (the player will get 3 points for winning the match and 20 points for winning the tournament, so 23 in total)
-        mycursor = mydb.cursor()
+        mycursor = mydb.cursor(buffered=True)
         sql = "UPDATE tournament_players SET total_score = total_score + 23 WHERE player = %s and tournamentID = %s" 
         val = (player2, tournamentID) 
         mycursor.execute(sql, val)
@@ -408,7 +408,7 @@ def endtournmatch():
     elif result == "tie": # tie, update result column in tournaments_plays table  
 
       try: 
-        mycursor = mydb.cursor()
+        mycursor = mydb.cursor(buffered=True)
         sql1 = "UPDATE tournament_plays SET result = %s WHERE playID = %s"
         val1 = ('tie', playID)
         mycursor.execute(sql1, val1)
@@ -420,13 +420,13 @@ def endtournmatch():
       ## if we are in semifinals or final, update the scores of players 
       if(tourn_round == 4 or tourn_round == 2): 
         # update tournament score for player1 (we do that only when player makes it to the round of 4) 
-        mycursor = mydb.cursor()
+        mycursor = mydb.cursor(buffered=True)
         sql = "UPDATE tournament_players SET total_score = total_score + 1 WHERE player = %s and tournamentID = %s" 
         val = (player1, tournamentID)  
         mycursor.execute(sql, val)
         mydb.commit()
         # update tournament score (we do that only when player makes it to the round of 4) 
-        mycursor = mydb.cursor()
+        mycursor = mydb.cursor(buffered=True)
         sql1 = "UPDATE tournament_players SET total_score = total_score + 1 WHERE player = %s and tournamentID = %s" 
         val1 = (player2, tournamentID)  
         mycursor.execute(sql1, val1)
@@ -509,7 +509,7 @@ def begintournament():
 
   if command == "begin":
 
-    mycursor = mydb.cursor() 
+    mycursor = mydb.cursor(buffered=True) 
 
     # get maxNumOfUsers of this tournament 
     sql = "SELECT * FROM tournaments where tournamentID = %s"
@@ -552,7 +552,7 @@ def begintournament():
         player2 = ''.join(map(str, L2))  
         player = str(player2)
 
-        mycursor = mydb.cursor()
+        mycursor = mydb.cursor(buffered=True)
 
         # update result column in tournaments_plays table   
         sql = "INSERT INTO tournament_plays (tournamentID, result, home, away, round) VALUES (%s, %s, %s, %s, %s)"
@@ -592,7 +592,7 @@ def next_tourn_matches():
     player = content["username"] 
 
     # check if player is active in these tournaments and find the matches that have no result yet, search in two tables using a JOIN query
-    mycursor = mydb.cursor()
+    mycursor = mydb.cursor(buffered=True)
     sql = "SELECT DISTINCT home, away, playID FROM (SELECT DISTINCT tournamentID, player FROM `tournament_players` WHERE active = 1 and player = %s) a JOIN (SELECT DISTINCT tournamentID, home, away, playID FROM `tournament_plays` WHERE result = '') b ON a.tournamentID = b.tournamentID AND a.player = b.home OR a.player = b.away"
     val = (player,)
     mycursor.execute(sql, val) 
@@ -630,7 +630,7 @@ def endpracticematch():
 
       # update practice_scores table for player1  
       try: 
-        mycursor = mydb.cursor()
+        mycursor = mydb.cursor(buffered=True)
         sql = "UPDATE practice_scores SET wins = wins + 1, plays = plays + 1, total_score = total_score + 3 WHERE username = %s"
         val = (player1,)  
         mycursor.execute(sql, val)
@@ -640,7 +640,7 @@ def endpracticematch():
 
       # update practice_scores table for player2
       try: 
-        mycursor = mydb.cursor()
+        mycursor = mydb.cursor(buffered=True)
         sql1 = "UPDATE practice_scores SET losses = losses + 1, plays = plays + 1 WHERE username = %s"
         val1 = (player2,)
         mycursor.execute(sql1, val1)
@@ -650,7 +650,7 @@ def endpracticematch():
 
       # insert match in practice_plays table   
       try: 
-        mycursor = mydb.cursor()
+        mycursor = mydb.cursor(buffered=True)
         sql2 = "INSERT INTO practice_plays (home, away, result, gametype) VALUES (%s, %s, %s, %s)"
         val2 = (player1, player2, 'home', gameType)
         mycursor.execute(sql2, val2)
@@ -663,7 +663,7 @@ def endpracticematch():
     elif result == "loss": # player2 won 
 
       # update practice_scores table for player2
-      mycursor = mydb.cursor()
+      mycursor = mydb.cursor(buffered=True)
       sql = "UPDATE practice_scores SET wins = wins + 1, plays = plays + 1, total_score = total_score + 3 WHERE username = %s"
       val = (player2,)
 
@@ -674,7 +674,7 @@ def endpracticematch():
         return jsonify( {"response": "error1"} ) 
 
       # update practice_scores table for player1
-      mycursor = mydb.cursor()
+      mycursor = mydb.cursor(buffered=True)
       sql1 = "UPDATE practice_scores SET losses = losses + 1, plays = plays + 1 WHERE username = %s"
       val1 = (player1,)
 
@@ -686,7 +686,7 @@ def endpracticematch():
 
       # insert match in practice_plays table   
       try: 
-        mycursor = mydb.cursor()
+        mycursor = mydb.cursor(buffered=True)
         sql2 = "INSERT INTO practice_plays (home, away, result, gametype) VALUES (%s, %s, %s, %s)"
         val2 = (player1, player2, 'away', gameType)
         mycursor.execute(sql2, val2)
@@ -699,7 +699,7 @@ def endpracticematch():
     elif result == "tie": # we had a tie
 
       # update practice_scores table for player1
-      mycursor = mydb.cursor()
+      mycursor = mydb.cursor(buffered=True)
       sql = "UPDATE practice_scores SET ties = ties + 1, plays = plays + 1, total_score = total_score + 1 WHERE username = %s"
       val = (player1,)
 
@@ -710,7 +710,7 @@ def endpracticematch():
         return jsonify( {"response": "error3"} ) 
 
       # update practice_scores table for player2
-      mycursor = mydb.cursor()
+      mycursor = mydb.cursor(buffered=True)
       sql1 = "UPDATE practice_scores SET ties = ties + 1, plays = plays + 1, total_score = total_score + 1 WHERE username = %s"
       val1 = (player2,)
 
@@ -722,7 +722,7 @@ def endpracticematch():
 
       # insert match in practice_plays table   
       try: 
-        mycursor = mydb.cursor()
+        mycursor = mydb.cursor(buffered=True)
         sql2 = "INSERT INTO practice_plays (home, away, result, gametype) VALUES (%s, %s, %s, %s)"
         val2 = (player1, player2, 'tie', gameType)
         mycursor.execute(sql2, val2)
@@ -748,7 +748,7 @@ def getpracticeplays():
   player = content["username"] 
 
   # retrieve all available players 
-  mycursor = mydb.cursor()
+  mycursor = mydb.cursor(buffered=True)
   sql = "SELECT * FROM practice_plays  WHERE home = %s or away = %s"  
   val = (player, player)   
   mycursor.execute(sql, val)
@@ -771,7 +771,7 @@ def getpracticeplays():
 def get_tournament_plays():
 
   # retrieve all finished tournament plays 
-  mycursor = mydb.cursor()
+  mycursor = mydb.cursor(buffered=True)
   sql = "SELECT DISTINCT a.tournamentID, home, away, result, round, gametype, name, a.playID FROM (SELECT DISTINCT tournamentID, home, away, result, round, playID FROM `tournament_plays` WHERE result <> '') a JOIN (SELECT tournamentID, gametype, name FROM `tournaments`) b ON a.tournamentID = b.tournamentID ORDER BY a.playID"  
   mycursor.execute(sql)
 
@@ -796,7 +796,7 @@ def delete_tournament():
   tournamentID = content["tournamentID"] 
 
   # delete tournament
-  mycursor = mydb.cursor()
+  mycursor = mydb.cursor(buffered=True)
   sql = "DELETE FROM tournaments WHERE tournamentID = %s"  
   val = (tournamentID,)   
   mycursor.execute(sql, val)
@@ -815,7 +815,7 @@ def get_all_players():
   if request.method == 'GET':
 
     # get all players from Gamemaster DB
-    mycursor = mydb.cursor()
+    mycursor = mydb.cursor(buffered=True)
     sql = "SELECT DISTINCT player FROM tournament_players UNION SELECT DISTINCT username FROM practice_scores"
     mycursor.execute(sql)
 
@@ -844,7 +844,7 @@ def get_tourn_data():
     playID = content["playID"] 
 
     # check if player is active in these tournaments and find the matches that have no result yet, search in two tables using a JOIN query
-    mycursor = mydb.cursor()
+    mycursor = mydb.cursor(buffered=True)
     sql = "SELECT a.tournamentID, home, away, result, round, gametype, name FROM (SELECT DISTINCT tournamentID, home, away, result, round FROM tournament_plays WHERE playID = %s) a JOIN (SELECT tournamentID, gametype, name FROM tournaments) b ON a.tournamentID = b.tournamentID"
     val = (playID,)
     mycursor.execute(sql, val) 
@@ -873,7 +873,7 @@ def get_joined_players():
     tournamentID = content["tournamentID"] 
     player = content["player"] 
 
-    mycursor = mydb.cursor()
+    mycursor = mydb.cursor(buffered=True)
     sql = "SELECT * FROM `tournament_players` WHERE tournamentID = %s AND player = %s"
     val = (tournamentID,player)
     mycursor.execute(sql, val) 
@@ -902,7 +902,7 @@ def get_all_finals():
     gametype = content["gametype"] 
 
     # retrieve all tournament final plays 
-    mycursor = mydb.cursor()
+    mycursor = mydb.cursor(buffered=True)
     sql = "SELECT DISTINCT b.home, b.away, a.tournamentID, a.gametype, b.round, b.result FROM (SELECT DISTINCT tournamentID, gametype FROM `tournaments` WHERE gametype = %s) a JOIN (SELECT DISTINCT tournamentID, home, away, round, playID, result FROM `tournament_plays` WHERE result <> '' AND result <> 'tie') b ON a.tournamentID = b.tournamentID AND round = 2"
     val = (gametype,)
     mycursor.execute(sql,val) 
