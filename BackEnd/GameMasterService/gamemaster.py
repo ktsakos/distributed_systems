@@ -11,15 +11,6 @@ from random import randrange
 app = Flask(__name__) # create an app instance
 logging.basicConfig(level=logging.DEBUG)   
 
- 
-#gamemaster db connection
-mydb = mysql.connector.connect(
-  host="db2", 
-  port="3306",
-  user="root",
-  passwd="password",
-  database="gamemaster_db"
-)
 
 def connect_to_db():
   #gamemaster db connection
@@ -54,9 +45,15 @@ def register():
   try: 
     mycursor.execute(sql, val)
     mydb.commit()
+    #close connection
+    mycursor.close() 
+    mydb.close()
     return jsonify( {"response": "OK"} ) 
 
   except: 
+    #close connection
+    mycursor.close() 
+    mydb.close()
     return jsonify( {"response": "error"} ) 
 
         
@@ -81,6 +78,10 @@ def getscore():
 
     # fetch one record, return result
     user_score = mycursor.fetchone()
+
+    #close connection
+    mycursor.close() 
+    mydb.close()
     
     if user_score:
       score = user_score[0]
@@ -102,7 +103,7 @@ def getscore():
 def index():
 
   return "OK"
-  #print('ok',file=sys.stdrr)
+  #print('ok',file=sys.stderr) 
 
 
 
@@ -127,9 +128,15 @@ def createtournament():
   try: 
     mycursor.execute(sql, val)
     mydb.commit()
+    #close connection
+    mycursor.close() 
+    mydb.close()
     return jsonify( {"response": "OK"} ) 
 
   except: 
+    #close connection
+    mycursor.close() 
+    mydb.close()
     return jsonify( {"response": "error"} ) 
 
  
@@ -151,6 +158,10 @@ def viewtournaments():
 
     # fetch all records, return results
     tournaments = mycursor.fetchall()
+
+    #close connection
+    mycursor.close() 
+    mydb.close()
 
     if tournaments:
       return jsonify(tournaments)
@@ -179,6 +190,10 @@ def get_available_tournaments():
 
     # fetch all records, return results
     tournaments = mycursor.fetchall()
+
+    #close connection
+    mycursor.close() 
+    mydb.close() 
 
     if tournaments:
       return jsonify(tournaments)
@@ -234,15 +249,28 @@ def entertournament():
         val1 = (tournamentID,)
         mycursor.execute(sql1, val1)
         mydb.commit()
+
+        #close connection
+        mycursor.close() 
+        mydb.close()
         return jsonify( {"response": "OK", "safekey": safekey} ) 
 
       except: 
+        #close connection
+        mycursor.close() 
+        mydb.close()
         return jsonify( {"response": "error"} ) 
 
     else:
+      #close connection
+      mycursor.close() 
+      mydb.close()
       return jsonify( {"response": "The tournament is full!"} ) 
 
   else: 
+      #close connection
+      mycursor.close() 
+      mydb.close()
       return jsonify( {"response": "No_such_tournament"} ) 
 
 
@@ -276,6 +304,9 @@ def endtournmatch():
         mycursor.execute(sql, val)
         mydb.commit()
       except: 
+        #close connection
+        mycursor.close() 
+        mydb.close()
         return jsonify( {"response": "error1"} ) 
 
       # update the row in tournaments_plays table (home player win)      
@@ -287,6 +318,9 @@ def endtournmatch():
         mycursor.execute(sql1, val1)
         mydb.commit()
       except: 
+        #close connection
+        mycursor.close() 
+        mydb.close()
         return jsonify( {"response": "error2"} ) 
 
       if(tourn_round == 8): # so next is the round of 4 (semifinals)
@@ -331,10 +365,16 @@ def endtournmatch():
 
         if next_opponent_home: 
 
+          #close connection
+          mycursor.close() 
+          mydb.close()
           return jsonify( {"response": next_playID, "response2": "away"} ) 
 
         if next_opponent_away: 
 
+          #close connection
+          mycursor.close() 
+          mydb.close()
           return jsonify( {"response": next_playID, "response2": "home"} ) 
 
       else: 
@@ -345,6 +385,9 @@ def endtournmatch():
         mycursor.execute(sql2, val2)
         mydb.commit()
 
+        #close connection
+        mycursor.close() 
+        mydb.close()
         return jsonify( {"response": "No_available_players_yet"} ) 
 
 
@@ -359,6 +402,9 @@ def endtournmatch():
         mycursor.execute(sql, val)
         mydb.commit()
       except: 
+        #close connection
+        mycursor.close() 
+        mydb.close()
         return jsonify( {"response": "error3"} ) 
 
       # update result column in tournaments_plays table, away player wins    
@@ -370,6 +416,9 @@ def endtournmatch():
         mycursor.execute(sql1, val1)
         mydb.commit()
       except: 
+        #close connection
+        mycursor.close() 
+        mydb.close()
         return jsonify( {"response": "error4"} ) 
 
       if(tourn_round == 8): # so next is the round of 4 (semifinals)
@@ -414,10 +463,16 @@ def endtournmatch():
 
         if next_opponent_home: 
 
+          #close connection
+          mycursor.close() 
+          mydb.close()
           return jsonify( {"response": next_playID, "response2": "away"} ) 
 
         if next_opponent_away: 
 
+          #close connection
+          mycursor.close() 
+          mydb.close()
           return jsonify( {"response": next_playID, "response2": "home"} ) 
 
       else: 
@@ -427,6 +482,9 @@ def endtournmatch():
         val2 = (tournamentID, '', player2, '', next_round)
         mycursor.execute(sql2, val2)
         mydb.commit()
+        #close connection
+        mycursor.close() 
+        mydb.close()
 
         return jsonify( {"response": "No_available_players_yet", "response2": "Just_wait"} ) 
 
@@ -442,6 +500,9 @@ def endtournmatch():
         mydb.commit()
 
       except: 
+        #close connection
+        mycursor.close() 
+        mydb.close()
         return jsonify( {"response": "error5"} ) 
 
       ## if we are in semifinals or final, update the scores of players 
@@ -482,6 +543,10 @@ def endtournmatch():
         player1 = str(player1)
         player2 = str(player2)
 
+        #close connection
+        mycursor.close() 
+        mydb.close()
+
       return jsonify( {"response": "tie", "player1": player1, "player2": player2, "round": tourn_round, "playID": newPlayID} ) 
       
 
@@ -509,6 +574,9 @@ def matchplayers():
     val = (player, playID, tournamentID)
     mycursor.execute(sql, val)
     mydb.commit()
+    #close connection
+    mycursor.close() 
+    mydb.close()
     return jsonify( {"response": "OK"} ) 
 
   elif(place == "home"):
@@ -517,9 +585,15 @@ def matchplayers():
     val = (player, playID, tournamentID)
     mycursor.execute(sql, val)
     mydb.commit()
+    #close connection
+    mycursor.close() 
+    mydb.close()
     return jsonify( {"response": "OK"} ) 
 
   else:
+    #close connection
+    mycursor.close() 
+    mydb.close()
     return jsonify( {"response": "error"} ) 
 
 
@@ -598,15 +672,24 @@ def begintournament():
       val2 = (tournamentID,)
       mycursor.execute(sql2, val2)
       mydb.commit()
+      #close connection
+      mycursor.close() 
+      mydb.close()
         
       return jsonify( {"response": "OK"} ), 200   
 
     else: 
 
+      #close connection
+      mycursor.close() 
+      mydb.close()
       return "Not correct number of players!"
 
   else:
 
+    #close connection
+    mycursor.close() 
+    mydb.close()
     return "No command to begin"
 
 
@@ -632,6 +715,10 @@ def next_tourn_matches():
 
     # fetch all records, return results
     matches = mycursor.fetchall()
+
+    #close connection
+    mycursor.close() 
+    mydb.close()
 
     if matches:
       return jsonify(matches), 200 
@@ -671,6 +758,9 @@ def endpracticematch():
         mycursor.execute(sql, val)
         mydb.commit()
       except: 
+        #close connection
+        mycursor.close() 
+        mydb.close()
         return jsonify( {"response": "error1"} ) 
 
       # update practice_scores table for player2
@@ -681,6 +771,9 @@ def endpracticematch():
         mycursor.execute(sql1, val1)
         mydb.commit()
       except: 
+        #close connection
+        mycursor.close() 
+        mydb.close()
         return jsonify( {"response": "error2"} ) 
 
       # insert match in practice_plays table   
@@ -690,8 +783,14 @@ def endpracticematch():
         val2 = (player1, player2, 'home', gameType)
         mycursor.execute(sql2, val2)
         mydb.commit()
+        #close connection
+        mycursor.close() 
+        mydb.close()
         return jsonify( {"response": "OK"} ) 
       except: 
+        #close connection
+        mycursor.close() 
+        mydb.close()
         return jsonify( {"response": "error3"} ) 
 
 
@@ -706,6 +805,9 @@ def endpracticematch():
         mycursor.execute(sql, val)
         mydb.commit()
       except: 
+        #close connection
+        mycursor.close() 
+        mydb.close()
         return jsonify( {"response": "error1"} ) 
 
       # update practice_scores table for player1
@@ -717,6 +819,9 @@ def endpracticematch():
         mycursor.execute(sql1, val1)
         mydb.commit()
       except: 
+        #close connection
+        mycursor.close() 
+        mydb.close()
         return jsonify( {"response": "error2"} ) 
 
       # insert match in practice_plays table   
@@ -728,6 +833,9 @@ def endpracticematch():
         mydb.commit()
         return jsonify( {"response": "OK"} ) 
       except: 
+        #close connection
+        mycursor.close() 
+        mydb.close()
         return jsonify( {"response": "error3"} ) 
 
 
@@ -742,6 +850,9 @@ def endpracticematch():
         mycursor.execute(sql, val)
         mydb.commit()
       except: 
+        #close connection
+        mycursor.close() 
+        mydb.close()
         return jsonify( {"response": "error3"} ) 
 
       # update practice_scores table for player2
@@ -753,6 +864,9 @@ def endpracticematch():
         mycursor.execute(sql1, val1)
         mydb.commit()
       except: 
+        #close connection
+        mycursor.close() 
+        mydb.close()
         return jsonify( {"response": "error4"} ) 
 
       # insert match in practice_plays table   
@@ -763,10 +877,17 @@ def endpracticematch():
         mycursor.execute(sql2, val2)
         mydb.commit()
       except: 
+        #close connection
+        mycursor.close() 
+        mydb.close()
         return jsonify( {"response": "error5"} ) 
 
       player1 = str(player1)
       player2 = str(player2)
+
+      #close connection
+      mycursor.close() 
+      mydb.close()
 
       return jsonify( {"response": "tie", "player1": player1, "player2": player2} ) 
 
@@ -793,6 +914,10 @@ def getpracticeplays():
   # fetch all records, return results
   allplays = mycursor.fetchall()
 
+  #close connection
+  mycursor.close() 
+  mydb.close()
+
   if allplays:
       return jsonify(allplays), 200  
 
@@ -816,6 +941,10 @@ def get_tournament_plays():
 
   # fetch all records, return results
   allplays = mycursor.fetchall()
+ 
+  #close connection
+  mycursor.close() 
+  mydb.close()
 
   if allplays:
       return jsonify(allplays), 200  
@@ -842,6 +971,9 @@ def delete_tournament():
   val = (tournamentID,)   
   mycursor.execute(sql, val)
   mydb.commit()
+  #close connection
+  mycursor.close() 
+  mydb.close()
 
   return jsonify({"response": "OK"}), 200  
 
@@ -864,6 +996,10 @@ def get_all_players():
 
     # fetch all records
     all_active_players = mycursor.fetchall()
+
+    #close connection
+    mycursor.close()   
+    mydb.close()
 
     if all_active_players:
       return jsonify(all_active_players), 200 
@@ -897,6 +1033,10 @@ def get_tourn_data():
     # fetch all records, return results
     matches = mycursor.fetchall()
 
+    #close connection
+    mycursor.close() 
+    mydb.close()
+
     if matches:
       return jsonify(matches), 200 
 
@@ -927,6 +1067,10 @@ def get_joined_players():
 
     # fetch record, return results
     players = mycursor.fetchone()
+
+    #close connection
+    mycursor.close() 
+    mydb.close()
 
     if players:
       return jsonify({"response": "yes"}), 200 
@@ -959,12 +1103,15 @@ def get_all_finals():
     # fetch record, return results
     finals = mycursor.fetchall()
 
+    #close connection
+    mycursor.close() 
+    mydb.close()
+
     if finals:
       return jsonify(finals), 200 
 
     else: 
       return jsonify({"response": "nofinals"}), 200
-
 
 
 

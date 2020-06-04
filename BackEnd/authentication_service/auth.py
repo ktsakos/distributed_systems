@@ -5,6 +5,7 @@ from itsdangerous import (TimedJSONWebSignatureSerializer as Serializer,
     BadSignature, SignatureExpired)
 from functools import wraps 
 import dateparser as dp
+import sys
 import logging
 
      
@@ -17,23 +18,14 @@ app.secret_key = 'thisismysecretdonottouchit'
 #    for x in range(32)) #a random string of 32 characters 
 
 
-mydb = mysql.connector.connect(
-    host="db", 
-    port="3306",
-    user="root",
-    passwd="password",
-    database="mydatabase"
-)
-
-
 def connect_to_db():
     #authentication db connection
     mydb = mysql.connector.connect(
-      host="db", 
-      port="3306",
-      user="root",
-      passwd="password",
-      database="mydatabase"
+        host="db", 
+        port="3306",
+        user="root",
+        passwd="password",
+        database="mydatabase"
     )
 
     return mydb
@@ -63,6 +55,10 @@ def token_required(f):
 
         # fetch one record, return result
         user_account = mycursor.fetchone()
+
+        #close connection
+        mycursor.close() 
+        mydb.close()
 
         if user_account:
 
@@ -141,6 +137,10 @@ def checktoken():
     mycursor.execute('UPDATE users SET timestamp=%s WHERE id=%s', (timestamp,id))
     mydb.commit() 
 
+    #close connection
+    mycursor.close() 
+    mydb.close()
+
     return jsonify({ "response": "OK" }), 200    
 
 
@@ -159,18 +159,23 @@ def register():
         task_content1 = content['content1']   
         task_content2 = content['content2']   
         task_content3 = content['content3']   
-        task_content4 = content['content4'] 
- 
+        task_content4 = content['content4']   
+    
         mycursor = mydb.cursor(buffered=True)
         sql = "INSERT INTO users (username, password, name, surname, email, date_created, role, timestamp, token) VALUES (%s, %s, %s, %s, %s, now(), %s, %s, %s)"
         val = (task_content0, task_content1, task_content2, task_content3, task_content4, "Player", "", "trash")
         try:
             mycursor.execute(sql, val)
             mydb.commit()
-            mycursor.close()
-        except:  ## if username is taken
+            #close connection
+            mycursor.close() 
+            mydb.close()
+        except:  ## if username is taken 
             payload = { "username": task_content0, "response": "UsernameTaken" }
-            return jsonify(payload)
+            #close connection
+            mycursor.close() 
+            mydb.close()
+            return jsonify(payload) 
 
         return jsonify({ "username": task_content0, "response": "OK" })
 
@@ -208,11 +213,16 @@ def login_auth():
         role = str(user_account[7])
         resp = 'OK'
 
-        #resp = { "username": username, "token": token, "role": role, "response" : resp } 
+        #close connection
+        mycursor.close() 
+        mydb.close()
 
         return jsonify({"username": username, "token": token, "role": role, "response" : resp}), 200  
 
     else:
+        #close connection
+        mycursor.close() 
+        mydb.close()
         return jsonify({ "response": "wrong_credentials" }), 200   
 
 
@@ -256,8 +266,14 @@ def assign():
         mycursor = mydb.cursor(buffered=True)
         mycursor.execute('SELECT * FROM users')
         users = mycursor.fetchall()
+        #close connection
+        mycursor.close() 
+        mydb.close()
         return render_template('all_users.html', users = users)
     else:
+        #close connection
+        mycursor.close() 
+        mydb.close()
         return "You are not an Admin, you don't have the right to enter!"
 
 
@@ -297,6 +313,9 @@ def update():
         mycursor.execute('UPDATE users SET role=%s WHERE id=%s', (role, id))
         flash("User Role Updated Successfully!")
         mydb.commit()
+        #close connection
+        mycursor.close() 
+        mydb.close()
         return redirect(url_for('assign'))
 
 
@@ -320,8 +339,14 @@ def logout():
             mycursor = mydb.cursor(buffered=True)
             mycursor.execute('UPDATE users SET token=%s WHERE username=%s', (trash, username))
             mydb.commit()
+            #close connection
+            mycursor.close() 
+            mydb.close()
             return jsonify({"response": "logged_out"}), 200 
         except:   
+            #close connection
+            mycursor.close() 
+            mydb.close()
             return jsonify({"response": "error"})
 
 
