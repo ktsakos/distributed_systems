@@ -5,11 +5,19 @@ import logging
 import sys
 import math 
 from random import randrange
+from kazoo.client import KazooClient
 
-
-     
 app = Flask(__name__) # create an app instance
 logging.basicConfig(level=logging.DEBUG)   
+
+zk=KazooClient(hosts='172.16.1.11:2181')
+zk.start() 
+
+# Ensure a path, create if necessary
+zk.ensure_path("/boardgames")
+
+# Create a node with data
+zk.create("/boardgames/gamemaster", b"Something")
 
 
 def connect_to_db():

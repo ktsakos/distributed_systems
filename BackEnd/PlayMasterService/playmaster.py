@@ -6,6 +6,7 @@ import logging
 import json
 import pymongo
 import requests
+from kazoo.client import KazooClient
 logging.basicConfig(level=logging.DEBUG)
 
 myclient=pymongo.MongoClient("mongodb://root:password@172.16.1.9:27017/")
@@ -13,6 +14,15 @@ mydb=myclient["playmasterdb"]
 mycol=mydb["games"]
 
 app=Flask(__name__)
+zk=KazooClient(hosts='172.16.1.11:2181')
+zk.start() 
+
+# Ensure a path, create if necessary
+zk.ensure_path("/boardgames")
+
+# Create a node with data
+zk.create("/boardgames/playmaster", b"Something2")
+
 app.config['SECRET_KEY']='secret!' #for enabling encryption
 socketio=SocketIO(app,cors_allowed_origins='*')
 

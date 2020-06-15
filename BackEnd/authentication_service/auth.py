@@ -7,12 +7,20 @@ from functools import wraps
 import dateparser as dp
 import sys
 import logging
-
+from kazoo.client import KazooClient
      
 app = Flask(__name__) # create an app instance
 logging.basicConfig(level=logging.DEBUG)   
-            
 
+zk=KazooClient(hosts='172.16.1.11:2181')
+zk.start()         
+
+# Ensure a path, create if necessary
+zk.ensure_path("/boardgames")
+
+# Create a node with data
+zk.create("/boardgames/auth", b"Something3")      
+            
 app.secret_key = 'thisismysecretdonottouchit'
 #app.secret_key = ''.join(random.choice(string.ascii_uppercase + string.digits)
 #    for x in range(32)) #a random string of 32 characters 
