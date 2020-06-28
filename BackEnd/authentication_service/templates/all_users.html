@@ -85,77 +85,124 @@ th {
             <td>{{column[7]}}</td>
             <td>
                 <a href="/update/{{column[5]}}" class="btn btn-warning btn-xs" data-toggle="modal" data-target="#modaledit{{column[5]}}">Edit Role</a>
-                <button class="btn btn-danger btn-sm"> Delete User </button>
+                <a href="/delete/{{column[5]}}" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#modaledit1{{column[5]}}">Delete User</a>
             </td>
         </tr>
 
         <div id="modaledit{{column[5]}}" class="modal fade" role="dialog">
 
-   <div class="modal-dialog">
+          <div class="modal-dialog">
+
+            <div class="modal-content">
+
+               <div class="modal-header">
+
+                  <button type="button" class="close" data-dismiss="modal">&times;</button>
+
+                  <h4 class="modal-title">Update Role</h4>
+
+               </div>
 
 
-    <div class="modal-content">
+               <div class="modal-body">
 
-       <div class="modal-header">
+                  <form action="{{ url_for('update') }}" method="POST">
 
-          <button type="button" class="close" data-dismiss="modal">&times;</button>
+                     <div class="form-group">
 
-          <h4 class="modal-title">Update Role</h4>
+                        <label>User Role:</label>
+                         <input type="hidden"  name="id" value="{{column[5]}}">
 
-       </div>
+                        <input type="text" class="form-control" name="role" value="{{column[7]}}">
 
+                     </div>
 
-       <div class="modal-body">
+                     <div class="form-group">
 
-          <form action="{{ url_for('update') }}" method="POST">
+                        <button class="btn btn-primary" type="submit">Update</button>
 
-             <div class="form-group">
+                     </div>
 
-                <label>User Role:</label>
-                 <input type="hidden"  name="id" value="{{column[5]}}">
+                  </form>
 
-                <input type="text" class="form-control" name="role" value="{{column[7]}}">
-
-             </div>
-
-             <div class="form-group">
-
-                <button class="btn btn-primary" type="sbumit">Update</button>
-
-             </div>
-
-          </form>
-
-       </div>
+              </div>
 
 
-       <div class="modal-footer">
+              <div class="modal-footer">
 
-          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
 
-       </div>
-
-
-    </div>
+              </div>
 
 
- </div>
+            </div>
 
 
-</div>
+          </div>
 
+        </div>
+
+        <div id="modaledit1{{column[5]}}" class="modal fade" role="dialog">
+
+          <div class="modal-dialog">
+
+            <div class="modal-content">
+
+               <div class="modal-header">
+
+                  <button type="button" class="close" data-dismiss="modal">&times;</button>
+
+                  <h4 class="modal-title">Delete User</h4>
+
+               </div>
+
+
+               <div class="modal-body">
+
+                  <form action="{{ url_for('delete') }}" method="POST">
+
+                     <div class="form-group">
+
+                        <label>Do you really want to delete this user?</label>
+                        <input type="hidden"  name="id1" value="{{column[5]}}">
+
+                     </div>
+
+                     <div class="form-group">
+
+                        <button class="btn btn-primary" type="submit">Yes</button>
+
+                     </div>
+
+                  </form>
+
+              </div>
+
+
+              <div class="modal-footer">
+
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+
+              </div>
+
+
+            </div>
+
+
+          </div>
+
+        </div>
 
         {% endfor %}
-
-
 
     </table>
 
 </div>
 {% endblock %}
 
+<br>
 
-<a href='http://172.16.1.3:80/welcome.php'> Games Page </a>
+<input type="button" style="background-color: lightblue" value="Back" onclick="goBack()">
 
 </body>
 </html>
@@ -164,4 +211,10 @@ th {
 <script type="text/javascript" src="{{url_for('static', filename='js/jquery-3.2.1.min.js') }}"></script>
 
 <script type="text/javascript" src="{{url_for('static', filename = 'js/bootstrap.min.js')}}"></script>
+
+<script>
+function goBack() {
+  window.history.back()
+}
+</script>
 

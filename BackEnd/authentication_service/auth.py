@@ -329,6 +329,50 @@ def update():
 
 
 
+# delete user 
+@app.route('/delete', methods=['POST'])
+@token_required
+def delete():
+
+    mydb = connect_to_db() #connect to Authentication DB
+
+    if request.method == 'POST':
+
+        if 'token' in session:
+            token = session['token']
+        
+        # check database for token 
+        mycursor = mydb.cursor(buffered=True)
+        sql = "SELECT * FROM users WHERE token=%s"
+        val = (token,)
+        mycursor.execute(sql, val)
+
+        # fetch one record, return result
+        user_account = mycursor.fetchone()
+
+        #update token timer 
+        timestamp = datetime.datetime.utcnow() 
+        id = user_account[5]
+        mycursor = mydb.cursor(buffered=True)
+        mycursor.execute('UPDATE users SET timestamp=%s WHERE id=%s', (timestamp,id))
+
+        mydb.commit() 
+
+        id = request.form['id']
+        mycursor = mydb.cursor(buffered=True)
+        sql = "DELETE FROM users WHERE id=%s"
+        val = (id,)
+        mycursor.execute(sql, val)
+        flash("User Deleted Successfully!")
+        mydb.commit()
+        #close connection
+        mycursor.close() 
+        mydb.close()
+        return redirect(url_for('assign'))
+
+
+
+
 # when user logs out, we delete token from users DB 
 @token_required
 @app.route('/logout', methods=['POST'])
